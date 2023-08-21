@@ -1,0 +1,28 @@
+{
+  "extends": [
+    "standard"
+  ],
+  "plugins": [
+    "import",
+    "standard"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "env": {
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "rules": {
+    "space-before-function-parent": 0,
+    "new-cap": 0
+  },
+  "globals": {
+    "localStorage": true
+  }
+}
