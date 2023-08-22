@@ -8,8 +8,11 @@ import bodyParser from "body-parser";
 
 import config from "./config";
 import v1Router from "./routes/index.js";
+import initialize from "./config/db";
 
 const app = new express();
+
+initialize();
 
 // Setup middlewares
 app.use(cors());
