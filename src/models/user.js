@@ -3,9 +3,21 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const userSchema = mongoose.Schema({
-    fullname: {
+    first_name: {
         type: String,
-        required: ['Name field is required!', false],
+        required: true,
+        unique: false
+    }, last_name: {
+        type: String,
+        required: true,
+        unique: false
+    }, gender: {
+        type: String,
+        required: true,
+        unique: false
+    }, dob: {
+        type: String,
+        required: true,
         unique: false
     }, email: {
         type: String,
@@ -47,12 +59,7 @@ const userSchema = mongoose.Schema({
         required: true,
         default: true,
     },
-    tokens: [{
-        token: {
-            type: String,
-            required: true
-        }
-    }], profilePic: {
+    profilePic: {
         type: Buffer
     }
 }, { timestamps: true })
@@ -68,14 +75,16 @@ userSchema.methods.toJSON = function () {
     const userObject = user.toObject()
     delete userObject.password
     delete userObject.tokens
-    delete userObject.avatar
     return userObject
 }
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, { expiresIn: "2 hours" }, process.env.JWT_SECRET)
-    user.tokens = user.tokens.concat({ token })
+    const token = jwt.sign(
+        { _id: this._id.toString() },
+        process.env.JWT_SECRET,
+        { expiresIn: "2 hours" }
+      );
     await user.save()
     return token
 }

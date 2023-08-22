@@ -1,6 +1,6 @@
 import express from "express";
 import * as UserController from "../controllers/UserController";
-import { verifyEmailValidator } from "../validators/user-validator";
+import { signUpValidator, verifyEmailValidator } from "../validators/user-validator";
 
 const Router = express.Router();
 
@@ -12,6 +12,7 @@ Router.get("/", (req, res) => {
     })
 })
 Router.post("/verify-email", verifyEmailValidator, UserController.verifyEmail);
+Router.post("/create-account", signUpValidator, UserController.signup);
 
 
 

@@ -1,7 +1,7 @@
 import { errorResponse } from "../helpers/response";
-import { VerifyEmailSchema } from "../validation-schemas/user-schema";
+import { SignupSchema, VerifyEmailSchema } from "../validation-schemas/user-schema";
 
-const verifyEmailValidator = async () => {
+const verifyEmailValidator = async (req, res, next) => {
     try {
         await VerifyEmailSchema.validateAsync(req.body);
         return next();
@@ -10,6 +10,16 @@ const verifyEmailValidator = async () => {
     }
 }
 
+const signUpValidator = async (req, res, next) => {
+    try {
+        await SignupSchema.validateAsync(req.body);
+        return next();
+    } catch (error) {
+        return errorResponse(res, { statusCode: 422, message: error.message });
+    }
+}
+
 export {
-    verifyEmailValidator
+    verifyEmailValidator,
+    signUpValidator
 }
