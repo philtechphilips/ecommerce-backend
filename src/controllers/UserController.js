@@ -186,6 +186,14 @@ const verifyOTP = async function (req, res) {
                 message: "User cannot be found.",
             });
         }
+
+        if (user.isVerified === true) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User profile is verified!",
+            });
+        }
+
         user = await update(User, { email }, { isVerified: true })
         if (!user) {
             return errorResponse(res, {
@@ -217,7 +225,8 @@ const resendVerificationToken = async function (req, res) {
                 message: "User cannot be found.",
             });
         }
-        verificationCode = await generateVerificationToken();
+        const verificationCode = await generateVerificationToken();
+        await saveVerificationToken(verificationCode, user.email)
         if (user) {
             const subject = `Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}`;
             const html = `<!DOCTYPE html>
@@ -253,12 +262,10 @@ const resendVerificationToken = async function (req, res) {
             const recepient = user.email;
             sendMail(subject, html, recepient);
         }
-        responseData = {
-            payload: user,
-            token,
-            statusCode: 201,
-            message: "A verification token has been sent to your email.",
-        };
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Verification token sent sucessfully!",
+        });
     } catch (error) {
         console.log(error);
         return errorResponse(res, {
@@ -273,5 +280,6 @@ export {
     verifyEmail,
     signup,
     login,
-    verifyOTP
+    verifyOTP,
+    resendVerificationToken
 }
