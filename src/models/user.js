@@ -89,31 +89,25 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
-userSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email })
+userSchema.pre("findOne", function () {
+  });
+  
+  userSchema.pre("find", function () {
+ 
+  });
+  
+  userSchema.pre("findOneAndUpdate", function () {
+  });
 
-    if (!user) {
-        throw new Error('These credentials do not match our records.')
-    }
+// userSchema.pre('save', async function (next) {
+//     const user = this
 
-    const isMatch = await bcrypt.compare(password, user.password)
+//     if (user.isModified('password')) {
+//         user.password = await bcrypt.hash(user.password, 8)
+//     }
 
-    if (!isMatch) {
-        throw new Error('These credentials do not match our records.')
-    }
-
-    return user
-}
-
-userSchema.pre('save', async function (next) {
-    const user = this
-
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
-    }
-
-    next()
-})
+//     next()
+// })
 
 const User = mongoose.model('User', userSchema)
 

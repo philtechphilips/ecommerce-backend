@@ -3,9 +3,10 @@ import safeCompare from "safe-compare";
 import User from "../models/user";
 import { errorResponse, successResponse } from "../helpers/response";
 import { create, fetchOne, isUnique } from "../helpers/schema";
-import { hashPassword } from "../utils/base";
+import { hashPassword, validatePassword } from "../utils/base";
 import { sendMail } from "../utils/email";
 import { getYear } from "date-fns";
+import bcrypt from "bcryptjs"
 
 dotenv.config();
 
@@ -16,13 +17,13 @@ const verifyEmail = async function (req, res) {
 
     try {
         const user = await fetchOne(User, { email });
-        if(user){
+        if (user) {
             return successResponse(res, {
                 statusCode: 200,
                 message: "User exist!.",
                 payload: user,
             });
-        }else{
+        } else {
             return errorResponse(res, {
                 statusCode: 404,
                 message: "User not found!.",
@@ -65,11 +66,11 @@ const signup = async function (req, res) {
             gender,
             dob,
             email,
-            password
+            password,
         };
         user = await create(User, user);
         token = await user.generateAuthToken();
-        if(user){
+        if (user) {
             const subject = `Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}`;
             const html = `<!DOCTYPE html>
             <html>
@@ -121,7 +122,51 @@ const signup = async function (req, res) {
     }
 };
 
+const login = async function (req, res) {
+    const { email, password } = req.body;
+    let user, token;
+    try {
+        user = await fetchOne(User, { email });
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User not found.",
+            });
+        }
+
+        const passwordValid = await validatePassword(password, user.password);
+        if (!passwordValid) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Invalid login credentials.",
+            });
+        }
+
+        // if (!user.isVerified) {
+        //     return errorResponse(res, {
+        //         statusCode: 400,
+        //         message: "Please confirm your email to login.",
+        //     });
+        // }
+        token = await user.generateAuthToken();
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Login successful.",
+            payload: user,
+            token,
+        });
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+};
+
+
 export {
     verifyEmail,
-    signup
+    signup,
+    login
 }

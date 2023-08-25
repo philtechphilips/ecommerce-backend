@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// to-do : remove synchronous codes where unnecessary
 
 const purify = async function (data) {
   return sanitize(data);
@@ -65,11 +66,7 @@ const decodeToken = async function (token) {
   return decodedToken;
 };
 
-const notifyBySlack = async function(text, fields) {
-  const send = await slack.alert({text, fields});
-  if(send) return true;
-  return false;
-}
+
 
 const titleCased = function (word) {
   return word.replace(word.charAt(0), word.charAt(0).toUpperCase());
@@ -85,6 +82,5 @@ export {
   generatePasswordResetLink,
   getIdfromToken,
   decodeToken,
-  notifyBySlack,
   titleCased
 };
