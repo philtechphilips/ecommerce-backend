@@ -146,12 +146,12 @@ const login = async function (req, res) {
             });
         }
 
-        // if (!user.isVerified) {
-        //     return errorResponse(res, {
-        //         statusCode: 400,
-        //         message: "Please confirm your email to login.",
-        //     });
-        // }
+        if (!user.isVerified) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Please confirm your email to login.",
+            });
+        }
         token = await user.generateAuthToken();
         return successResponse(res, {
             statusCode: 200,
@@ -275,11 +275,28 @@ const resendVerificationToken = async function (req, res) {
     }
 };
 
+const viewProfile = async function (req, res) {
+    const { user } = req;
+    try {
+      return successResponse(res, {
+        statusCode: 200,
+        message: "Profile successfully loaded.",
+        payload: user,
+      });
+    } catch (error) {
+      console.log(error);
+      return errorResponse(res, {
+        statusCode: 500,
+        message: "An error occured, pls try again later.",
+      });
+    }
+  };
 
 export {
     verifyEmail,
     signup,
     login,
     verifyOTP,
-    resendVerificationToken
+    resendVerificationToken,
+    viewProfile
 }
