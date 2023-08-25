@@ -51,6 +51,7 @@
     "express-fileupload": "^1.2.1",
     "form-data": "^4.0.0",
     "helmet": "^4.6.0",
+    "ioredis": "^5.3.2",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
@@ -59,6 +60,7 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.4",
     "randomstring": "^1.2.1",
+    "redis": "^4.6.8",
     "safe-compare": "^1.1.4",
     "winston": "^3.3.3"
   }

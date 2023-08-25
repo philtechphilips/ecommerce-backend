@@ -9,6 +9,7 @@ import bodyParser from "body-parser";
 import config from "./config";
 import v1Router from "./routes/index.js";
 import initialize from "./config/db";
+import redis from "./config/redis";
 
 const app = new express();
 
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true, parameterLimit: "100000" }));
 app.use("/v1", v1Router);
 
 app.get("/", (req, res) => {
+
   res.send({
     status: 200,
     message: "Welcome to Virtuc E-commerce website  v1.0",
