@@ -3,7 +3,7 @@ import safeCompare from "safe-compare";
 import User from "../models/user";
 import { errorResponse, successResponse } from "../helpers/response";
 import { create, fetchOne, isUnique } from "../helpers/schema";
-import { hashPassword, validatePassword } from "../utils/base";
+import { generateVerificationToken, hashPassword, validatePassword } from "../utils/base";
 import { sendMail } from "../utils/email";
 import { getYear } from "date-fns";
 import bcrypt from "bcryptjs"
@@ -49,7 +49,7 @@ const signup = async function (req, res) {
         email,
         password
     } = req.body;
-    let user, responseData, token;
+    let user, responseData, token, verificationCode;
     try {
         user = await isUnique(User, { email });
         if (!user) {
@@ -70,6 +70,7 @@ const signup = async function (req, res) {
         };
         user = await create(User, user);
         token = await user.generateAuthToken();
+        verificationCode = await generateVerificationToken();
         if (user) {
             const subject = `Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}`;
             const html = `<!DOCTYPE html>
@@ -92,6 +93,7 @@ const signup = async function (req, res) {
                   <p>Welcome to Viruc Ecommerce, your one-stop destination for all things stylish, innovative, and essential. We're thrilled to have you join our family of savvy shoppers! 🛍️
                   At Viruc, we believe in providing you with top-notch products that enhance your lifestyle. From fashion and electronics to home essentials, our diverse range has something special for everyone.</p>
                   <p>Kindly use the verification code below to finalize your account registration.</p>
+                  <p>${verificationCode}</p>
                   </td>
                 </tr>
                 <tr>

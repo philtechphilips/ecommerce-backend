@@ -36,6 +36,14 @@ const generateResetToken = async function () {
   return generatedToken;
 };
 
+const generateVerificationToken = async function () {
+  let generatedToken = randomString.generate({
+    length: 6,
+    charset: "numeric",
+  });
+  return generatedToken;
+};
+
 const generateVerificationLink = async function (userId) {
   const verificationToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "15 minutes",
@@ -82,5 +90,6 @@ export {
   generatePasswordResetLink,
   getIdfromToken,
   decodeToken,
-  titleCased
+  titleCased,
+  generateVerificationToken
 };
