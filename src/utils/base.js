@@ -3,9 +3,11 @@ import randomString from "randomstring";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import redis from "../config/redis";
 
 dotenv.config();
 
+// to-do : remove synchronous codes where unnecessary
 
 const purify = async function (data) {
   return sanitize(data);
@@ -35,12 +37,22 @@ const generateResetToken = async function () {
   return generatedToken;
 };
 
-const generateVerificationLink = async function (userId) {
-  const verificationToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "15 minutes",
+const generateVerificationToken = async function () {
+  let generatedToken = randomString.generate({
+    length: 6,
+    charset: "numeric",
   });
-  const verificationLink = `${process.env.FRONTEND_URL}/Auth/Verification/${verificationToken}`;
-  return verificationLink;
+  return generatedToken;
+};
+
+
+const saveVerificationToken = async function (token, email) {
+  await redis.set(token, email, "EX", 300)
+};
+
+const decodeVerificationToken = async function (token) {
+  const user = await redis.get(token)
+  return user;
 };
 
 const generatePasswordResetLink = async function (userId) {
@@ -65,11 +77,7 @@ const decodeToken = async function (token) {
   return decodedToken;
 };
 
-const notifyBySlack = async function(text, fields) {
-  const send = await slack.alert({text, fields});
-  if(send) return true;
-  return false;
-}
+
 
 const titleCased = function (word) {
   return word.replace(word.charAt(0), word.charAt(0).toUpperCase());
@@ -81,10 +89,11 @@ export {
   validatePassword,
   generatePassword,
   generateResetToken,
-  generateVerificationLink,
+  saveVerificationToken,
   generatePasswordResetLink,
   getIdfromToken,
   decodeToken,
-  notifyBySlack,
-  titleCased
+  titleCased,
+  generateVerificationToken,
+  decodeVerificationToken
 };

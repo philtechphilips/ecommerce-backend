@@ -1,6 +1,6 @@
 import express from "express";
 import * as UserController from "../controllers/UserController";
-import { signUpValidator, verifyEmailValidator } from "../validators/user-validator";
+import { loginValidator, signUpValidator, userVerification, verifyEmailValidator } from "../validators/user-validator";
 
 const Router = express.Router();
 
@@ -13,8 +13,8 @@ Router.get("/", (req, res) => {
 })
 Router.post("/verify-email", verifyEmailValidator, UserController.verifyEmail);
 Router.post("/create-account", signUpValidator, UserController.signup);
-
-
-
+Router.post("/login", loginValidator, UserController.login);
+Router.post("/verify-account", userVerification, UserController.verifyOTP);
+Router.post("/resend-verification-token", verifyEmailValidator, UserController.resendVerificationToken);
 
 module.exports = Router;
