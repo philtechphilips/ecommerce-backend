@@ -12,5 +12,7 @@ Router.post("/create-account", signUpValidator, UserController.signup);
 Router.post("/login", loginValidator, UserController.login);
 Router.post("/verify-account", userVerification, UserController.verifyOTP);
 Router.post("/resend-verification-token", verifyEmailValidator, UserController.resendVerificationToken);
+Router.patch("/resend-verification-token", verifyEmailValidator, UserController.resendVerificationToken);
+Router.patch("/update-profile", auth, UserController.updateProfile);
 
 module.exports = Router;

@@ -278,19 +278,49 @@ const resendVerificationToken = async function (req, res) {
 const viewProfile = async function (req, res) {
     const { user } = req;
     try {
-      return successResponse(res, {
-        statusCode: 200,
-        message: "Profile successfully loaded.",
-        payload: user,
-      });
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Profile successfully loaded.",
+            payload: user,
+        });
     } catch (error) {
-      console.log(error);
-      return errorResponse(res, {
-        statusCode: 500,
-        message: "An error occured, pls try again later.",
-      });
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
     }
-  };
+};
+
+const updateProfile = async function (req, res) {
+    const { first_name, last_name, phone_number, dob, gender } = req.body;
+    let { user } = req;
+    console.log(user._id)
+    try {
+        user = await update(
+            User,
+            { _id: user?._id },
+            {
+                first_name,
+                last_name,
+                phone_number,
+                dob,
+                gender
+            }
+        );
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Profile successfully updated.",
+            payload: user,
+        });
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+};
 
 export {
     verifyEmail,
@@ -298,5 +328,6 @@ export {
     login,
     verifyOTP,
     resendVerificationToken,
-    viewProfile
+    viewProfile,
+    updateProfile
 }

@@ -13,9 +13,7 @@ export const auth = async function (req, res, next) {
     token = sanitize(req.header("Authorization"));
     token = token.replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await Promise.all([
-      fetchOne(User, { _id: decoded._id, "tokens.token": token }),
-    ]);
+    const user = await fetchOne(User, { _id: decoded._id, "tokens.token": token });
     if (!user) {
       throw new Error("User not found");
     }
