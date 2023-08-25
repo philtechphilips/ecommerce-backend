@@ -19,9 +19,14 @@ const SignupSchema = Joi.object({
     gender: Joi.string().min(2).required(),
 });
 
+const userVerificationSchema = Joi.object({
+    token: Joi.string().min(4).required(),
+});
+
 export {
     LoginSchema,
     SignupSchema,
     VerifyEmailSchema,
+    userVerificationSchema
   };
   

@@ -3,6 +3,7 @@ import randomString from "randomstring";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import redis from "../config/redis";
 
 dotenv.config();
 
@@ -44,12 +45,14 @@ const generateVerificationToken = async function () {
   return generatedToken;
 };
 
-const generateVerificationLink = async function (userId) {
-  const verificationToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "15 minutes",
-  });
-  const verificationLink = `${process.env.FRONTEND_URL}/Auth/Verification/${verificationToken}`;
-  return verificationLink;
+
+const saveVerificationToken = async function (token, email) {
+  await redis.set(token, email, "EX", 300)
+};
+
+const decodeVerificationToken = async function (token) {
+  const user = await redis.get(token)
+  return user;
 };
 
 const generatePasswordResetLink = async function (userId) {
@@ -86,10 +89,11 @@ export {
   validatePassword,
   generatePassword,
   generateResetToken,
-  generateVerificationLink,
+  saveVerificationToken,
   generatePasswordResetLink,
   getIdfromToken,
   decodeToken,
   titleCased,
-  generateVerificationToken
+  generateVerificationToken,
+  decodeVerificationToken
 };

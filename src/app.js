@@ -10,6 +10,7 @@ import config from "./config";
 import v1Router from "./routes/index.js";
 import initialize from "./config/db";
 import redis from "./config/redis";
+import axios from "axios";
 
 const app = new express();
 
@@ -35,7 +36,22 @@ app.use(bodyParser.urlencoded({ extended: true, parameterLimit: "100000" }));
 
 app.use("/v1", v1Router);
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const { verificationCode } = req.body;
+  // const cached =  await redis.get(`post-${id}`)
+
+  // if(cached){
+  //   return res.json(JSON.parse(cached))
+  // }
+
+  // const response = await axios.get(`https://jsonplaceholder.typicode.com/todos/${id}`)
+
+  // redis.set(`post-${id}`, JSON.stringify(response.data))
+ 
+  
+  // return res.json(response.data)
+
+ 
 
   res.send({
     status: 200,

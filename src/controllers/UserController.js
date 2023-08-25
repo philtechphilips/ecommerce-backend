@@ -2,11 +2,12 @@ import dotenv from "dotenv";
 import safeCompare from "safe-compare";
 import User from "../models/user";
 import { errorResponse, successResponse } from "../helpers/response";
-import { create, fetchOne, isUnique } from "../helpers/schema";
-import { generateVerificationToken, hashPassword, validatePassword } from "../utils/base";
+import { create, fetchOne, isUnique, update } from "../helpers/schema";
+import { decodeVerificationToken, generateVerificationToken, hashPassword, saveVerificationToken, validatePassword } from "../utils/base";
 import { sendMail } from "../utils/email";
 import { getYear } from "date-fns";
 import bcrypt from "bcryptjs"
+import redis from "../config/redis";
 
 dotenv.config();
 
@@ -71,6 +72,7 @@ const signup = async function (req, res) {
         user = await create(User, user);
         token = await user.generateAuthToken();
         verificationCode = await generateVerificationToken();
+        await saveVerificationToken(verificationCode, user.email)
         if (user) {
             const subject = `Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}`;
             const html = `<!DOCTYPE html>
@@ -166,6 +168,43 @@ const login = async function (req, res) {
     }
 };
 
+const verifyOTP = async function (req, res) {
+    const { token } = req.body;
+    let user, email;
+    try {
+        email = await decodeVerificationToken(token);
+        if (!email) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Invalid or Expired Token.",
+            });
+        }
+        user = await fetchOne(User, { email });
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User cannot be found.",
+            });
+        }
+        user = await update(User, { email }, { isVerified: true })
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Unable to verify account!",
+            });
+        }
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Account verified sucessfully!",
+        });
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+};
 
 const resendVerificationToken = async function (req, res) {
     const { email } = req.body;
@@ -233,5 +272,6 @@ const resendVerificationToken = async function (req, res) {
 export {
     verifyEmail,
     signup,
-    login
+    login,
+    verifyOTP
 }
