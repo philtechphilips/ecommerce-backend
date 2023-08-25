@@ -4,6 +4,8 @@ import User from "../models/user";
 import { errorResponse, successResponse } from "../helpers/response";
 import { create, fetchOne, isUnique } from "../helpers/schema";
 import { hashPassword } from "../utils/base";
+import { sendMail } from "../utils/email";
+import { getYear } from "date-fns";
 
 dotenv.config();
 
@@ -67,6 +69,42 @@ const signup = async function (req, res) {
         };
         user = await create(User, user);
         token = await user.generateAuthToken();
+        if(user){
+            const subject = `Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}`;
+            const html = `<!DOCTYPE html>
+            <html>
+            <head>
+              <style>
+              @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+              </style>
+            </head>
+            <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td style="padding: 20px 0; text-align: center; background-color: #333333;">
+                    <h2 style="color: #ffffff;">Welcome, Onboard to ${process.env.EMAIL_SENDER_NAME}</h2>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 20px; background-color: #ffffff;">
+                  <p>Hi ${user.first_name},</p>
+                  <p>Welcome to Viruc Ecommerce, your one-stop destination for all things stylish, innovative, and essential. We're thrilled to have you join our family of savvy shoppers! 🛍️
+                  At Viruc, we believe in providing you with top-notch products that enhance your lifestyle. From fashion and electronics to home essentials, our diverse range has something special for everyone.</p>
+                  <p>Kindly use the verification code below to finalize your account registration.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 20px; text-align: center; background-color: #333333;">
+                    <p style="color: #ffffff; margin: 0;">© ${getYear(new Date())} ${process.env.EMAIL_SENDER_NAME}. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
+            `
+            const recepient = user.email;
+            sendMail(subject, html, recepient);
+        }
         responseData = {
             payload: user,
             token,
