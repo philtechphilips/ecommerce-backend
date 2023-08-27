@@ -15,6 +15,6 @@ Router.post("/resend-verification-token", verifyEmailValidator, UserController.r
 Router.patch("/update-profile", auth, UserController.updateProfile);
 Router.post("/forgot-password", forgotPassword, UserController.forgotPassword);
 Router.post("/verify-forgot-password", userVerification, UserController.verifyResetPassword);
-Router.post("/reset-password", resetPassword, UserController.resetPassword);
+Router.patch("/reset-password", resetPassword, UserController.resetPassword);
 
 module.exports = Router;

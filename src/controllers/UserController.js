@@ -324,7 +324,7 @@ const updateProfile = async function (req, res) {
 };
 
 const forgotPassword = async function (req, res) {
-    const { email} = req.body;
+    const { email } = req.body;
     let user, token;
     try {
         user = await fetchOne(User, { email });
@@ -417,24 +417,23 @@ const verifyResetPassword = async function (req, res) {
 };
 
 const resetPassword = async function (req, res) {
-    const { first_name, last_name, phone_number, dob, gender } = req.body;
-    let { user } = req;
-    console.log(user._id)
+    let { email, password } = req.body;
+    let user;
+    password = await hashPassword(password);
     try {
+        user = await fetchOne(User, { email });
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User cannot be found.",
+            });
+        }
         user = await update(
-            User,
-            { _id: user?._id },
-            {
-                first_name,
-                last_name,
-                phone_number,
-                dob,
-                gender
-            }
+            User, { email }, { password }
         );
         return successResponse(res, {
             statusCode: 200,
-            message: "Profile successfully updated.",
+            message: "Password reset successful, kindly login with your new password.",
             payload: user,
         });
     } catch (error) {
