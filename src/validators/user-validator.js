@@ -1,5 +1,5 @@
 import { errorResponse } from "../helpers/response";
-import { LoginSchema, SignupSchema, VerifyEmailSchema, userVerificationSchema } from "../validation-schemas/user-schema";
+import { LoginSchema, SignupSchema, VerifyEmailSchema, forgotPasswordSchema, resetPasswordSchema, userVerificationSchema } from "../validation-schemas/user-schema";
 
 const verifyEmailValidator = async (req, res, next) => {
     try {
@@ -37,9 +37,29 @@ const userVerification = async (req, res, next) => {
     }
 }
 
+const forgotPassword = async (req, res, next) => {
+    try {
+        await forgotPasswordSchema.validateAsync(req.body);
+        return next();
+    } catch (error) {
+        return errorResponse(res, { statusCode: 422, message: error.message });
+    }
+}
+
+const resetPassword = async (req, res, next) => {
+    try {
+        await resetPasswordSchema.validateAsync(req.body);
+        return next();
+    } catch (error) {
+        return errorResponse(res, { statusCode: 422, message: error.message });
+    }
+}
+
 export {
     verifyEmailValidator,
     signUpValidator,
     loginValidator,
-    userVerification
+    userVerification,
+    forgotPassword,
+    resetPassword
 }

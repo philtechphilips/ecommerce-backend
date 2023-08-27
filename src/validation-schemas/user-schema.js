@@ -20,13 +20,24 @@ const SignupSchema = Joi.object({
 });
 
 const userVerificationSchema = Joi.object({
-    token: Joi.string().min(4).required(),
+    token: Joi.string().min(6).required(),
+});
+
+const forgotPasswordSchema = Joi.object({
+    email: Joi.string().min(3).required(),
+});
+
+const resetPasswordSchema = Joi.object({
+    email: Joi.string().min(3).required(),
+    password: Joi.string().min(8).max(200).required(),
 });
 
 export {
     LoginSchema,
     SignupSchema,
     VerifyEmailSchema,
-    userVerificationSchema
+    userVerificationSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema 
   };
   
