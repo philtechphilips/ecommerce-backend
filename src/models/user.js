@@ -13,11 +13,9 @@ const userSchema = mongoose.Schema({
         unique: false
     }, gender: {
         type: String,
-        required: true,
         unique: false
     }, dob: {
         type: String,
-        required: true,
         unique: false
     }, email: {
         type: String,
@@ -27,7 +25,6 @@ const userSchema = mongoose.Schema({
     },
     phone_number: {
         type: String,
-        required: true,
         min: 8,
     }, password: {
         type: String,

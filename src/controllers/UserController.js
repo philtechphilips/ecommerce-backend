@@ -44,9 +44,6 @@ const signup = async function (req, res) {
     let {
         first_name,
         last_name,
-        phone_number,
-        gender,
-        dob,
         email,
         password
     } = req.body;
@@ -63,9 +60,6 @@ const signup = async function (req, res) {
         user = {
             first_name,
             last_name,
-            phone_number,
-            gender,
-            dob,
             email,
             password,
         };
