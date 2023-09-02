@@ -1,6 +1,25 @@
 import { errorResponse, successResponse } from "../helpers/response";
-import { create, deleteItem, fetchOne, isUnique, update } from "../helpers/schema";
+import { create, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import Category from "../models/category";
+
+const fetchCategory = async function (req, res) {
+    let categories, responseData;
+    try {
+        categories = await fetch(Category);
+        responseData = {
+            payload: categories,
+            statusCode: 200,
+            message: "Categories fetched sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
 
 const createCategory = async function (req, res) {
     let {
@@ -150,5 +169,6 @@ export{
     createCategory,
     createCategoryType,
     deleteCategory,
-    deleteCategoryType
+    deleteCategoryType,
+    fetchCategory
 }

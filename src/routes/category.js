@@ -6,7 +6,7 @@ import { auth } from "../middlewares/auth";
 const Router = express.Router();
 
 // Category Router
-// Router.get("/", auth, UserController.viewProfile);
+Router.get("/", CategoryController.fetchCategory);
 Router.post("/create-category", categoryValidator, CategoryController.createCategory);
 Router.patch("/create-category-type", categoryTypeValidator, CategoryController.createCategoryType);
 Router.delete("/delete-category/:categoryId", CategoryController.deleteCategory);
