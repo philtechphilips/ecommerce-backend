@@ -10,5 +10,6 @@ const Router = express.Router();
 Router.post("/create-category", categoryValidator, CategoryController.createCategory);
 Router.patch("/create-category-type", categoryTypeValidator, CategoryController.createCategoryType);
 Router.delete("/delete-category/:categoryId", CategoryController.deleteCategory);
+Router.patch("/delete-category-type/:categoryId", CategoryController.deleteCategoryType);
 
 module.exports = Router;

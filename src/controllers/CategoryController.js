@@ -108,8 +108,47 @@ const deleteCategory = async function (req, res) {
     }
 }
 
+const deleteCategoryType = async function (req, res) {
+    let { categoryId: _id } = req.params;
+    let { typeId } = req.body;
+    let categories, categoryTypes, responseData;
+    try {
+        categories = await fetchOne(Category, { _id });
+        if (!categories) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Category not found.",
+            });
+        }
+
+        categoryTypes = categories.categoryTypes.filter((item) => {
+            return item._id != typeId;
+        });
+
+        // console.log(categoryTypes)
+
+        categories = await update(
+            Category, { _id }, { categoryTypes }
+        );
+
+        responseData = {
+            payload: categories,
+            statusCode: 200,
+            message: "Category type deleted sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
 export{
     createCategory,
     createCategoryType,
-    deleteCategory
+    deleteCategory,
+    deleteCategoryType
 }
