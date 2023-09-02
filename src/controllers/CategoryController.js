@@ -248,11 +248,32 @@ const createSubCategory = async function (req, res) {
     }
 }
 
+const fetchSubCategory = async function (req, res) {
+    let subCategories, responseData;
+    try {
+        subCategories = await fetch(SubCategory);
+        responseData = {
+            payload: subCategories,
+            statusCode: 200,
+            message: "Sub Categories fetched sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+
 export {
     createCategory,
     createCategoryType,
     deleteCategory,
     deleteCategoryType,
     fetchCategory,
-    createSubCategory
+    createSubCategory,
+    fetchSubCategory
 }

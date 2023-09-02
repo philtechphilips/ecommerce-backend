@@ -13,5 +13,6 @@ Router.delete("/delete-category/:categoryId", CategoryController.deleteCategory)
 Router.patch("/delete-category-type/:categoryId", CategoryController.deleteCategoryType);
 Router.post("/create-category", categoryValidator, CategoryController.createCategory);
 Router.post("/create-subcategory", subCategoryTypeValidator, CategoryController.createSubCategory);
+Router.get("/fetch-subcategory", CategoryController.fetchSubCategory);
 
 module.exports = Router;
