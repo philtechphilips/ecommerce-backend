@@ -34,6 +34,6 @@ subCategorySchema.pre("findOneAndUpdate", function () {
     this.populate("categoryId");
 });
 
-const subCategory = mongoose.model('SubCategory', subCategorySchema)
+const SubCategory = mongoose.model('SubCategory', subCategorySchema)
 
-module.exports = subCategory
+module.exports = SubCategory

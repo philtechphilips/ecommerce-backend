@@ -1,6 +1,7 @@
 import { errorResponse, successResponse } from "../helpers/response";
 import { create, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import Category from "../models/category";
+import SubCategory from "../models/subCategory";
 
 const fetchCategory = async function (req, res) {
     let categories, responseData;
@@ -71,14 +72,14 @@ const createCategoryType = async function (req, res) {
         const doesCategoryTypeExist = categories.categoryTypes.filter((item) => {
             return item.type === categoryType;
         });
-        
-        if(doesCategoryTypeExist.length > 0){
+
+        if (doesCategoryTypeExist.length > 0) {
             return errorResponse(res, {
                 statusCode: 400,
                 message: "Category type exist.",
             });
         }
-        
+
         categoryTypes = categories.categoryTypes.concat({ type: categoryType })
         // console.log(categoryTypes)
         categories = await update(
@@ -165,10 +166,93 @@ const deleteCategoryType = async function (req, res) {
     }
 }
 
-export{
+const createSubCategory = async function (req, res) {
+    let {
+        categoryId,
+        categoryType,
+        subCategory
+    } = req.body;
+
+    let subCategories, subcategoryItem, responseData;
+    try {
+        subCategories = await isUnique(SubCategory, { categoryId });
+        if (!subCategories) {
+            subCategories = {
+                categoryId,
+                categoryType
+            };
+
+            subCategories = await fetchOne(SubCategory, { categoryId });
+
+            const subcategoryItem = subCategories.subCategories.filter((item) => {
+                return item.subCategory === subCategory;
+            });
+
+            if (subcategoryItem.length > 0) {
+                return errorResponse(res, {
+                    statusCode: 400,
+                    message: "sub category exist.",
+                });
+            }
+
+            subCategories = subCategories.subCategories.concat({ subCategory })
+            // return console.log(subCategories)
+            subCategories = await update(
+                SubCategory, { categoryId }, { subCategories }
+            );
+
+            responseData = {
+                payload: subCategories,
+                statusCode: 201,
+                message: "Sub Category created sucessfully!",
+            };
+            return successResponse(res, responseData);
+        }
+        subCategories = {
+            categoryId,
+            categoryType
+        };
+        subCategories = await create(SubCategory, subCategories);
+
+        subCategories = await fetchOne(SubCategory, { categoryId });
+
+        const subcategoryItem = subCategories.subCategories.filter((item) => {
+            return item.subCategory === subCategory;
+        });
+
+        if (subcategoryItem.length > 0) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "sub category exist.",
+            });
+        }
+
+        subCategories = subCategories.subCategories.concat({ subCategory })
+        // return console.log(subCategories)
+        subCategories = await update(
+            SubCategory, { categoryId }, { subCategories }
+        );
+
+        responseData = {
+            payload: subCategories,
+            statusCode: 201,
+            message: "Sub Category created sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+export {
     createCategory,
     createCategoryType,
     deleteCategory,
     deleteCategoryType,
-    fetchCategory
+    fetchCategory,
+    createSubCategory
 }

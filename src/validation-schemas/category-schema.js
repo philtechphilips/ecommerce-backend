@@ -9,7 +9,14 @@ const categoryTypeSchema = Joi.object({
     categoryType: Joi.string().min(2).required(),
 });
 
+const subCategoryTypeSchema = Joi.object({
+    categoryId: Joi.string().min(8).required(),
+    categoryType: Joi.string().min(2).required(),
+    subCategory: Joi.string().min(2).required(),
+});
+
 export {
     categorySchema,
-    categoryTypeSchema
+    categoryTypeSchema,
+    subCategoryTypeSchema
 }
