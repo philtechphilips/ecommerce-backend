@@ -3,9 +3,9 @@ const subCategorySchema = mongoose.Schema({
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        unique: true
+        ref: "Category"
     },
-    categoryType:{
+    categoryType: {
         type: String,
         required: true,
         unique: true
@@ -17,6 +17,22 @@ const subCategorySchema = mongoose.Schema({
         }
     }],
 }, { timestamps: true })
+
+subCategorySchema.pre("save", function () {
+    this.populate("categoryId");
+});
+
+subCategorySchema.pre("findOne", function () {
+    this.populate("categoryId");
+});
+
+subCategorySchema.pre("find", function () {
+    this.populate("categoryId");
+});
+
+subCategorySchema.pre("findOneAndUpdate", function () {
+    this.populate("categoryId");
+});
 
 const subCategory = mongoose.model('SubCategory', subCategorySchema)
 
