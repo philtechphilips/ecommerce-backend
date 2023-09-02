@@ -1,5 +1,5 @@
 import { errorResponse, successResponse } from "../helpers/response";
-import { create, fetchOne, isUnique, update } from "../helpers/schema";
+import { create, deleteItem, fetchOne, isUnique, update } from "../helpers/schema";
 import Category from "../models/category";
 
 const createCategory = async function (req, res) {
@@ -48,9 +48,20 @@ const createCategoryType = async function (req, res) {
                 message: "Category not found.",
             });
         }
+
+        const doesCategoryTypeExist = categories.categoryTypes.filter((item) => {
+            return item.type === categoryType;
+        });
+        
+        if(doesCategoryTypeExist.length > 0){
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Category type exist.",
+            });
+        }
         
         categoryTypes = categories.categoryTypes.concat({ type: categoryType })
-        console.log(categoryTypes)
+        // console.log(categoryTypes)
         categories = await update(
             Category, { _id: categoryId }, { categoryTypes }
         );
@@ -69,7 +80,36 @@ const createCategoryType = async function (req, res) {
     }
 }
 
+const deleteCategory = async function (req, res) {
+    let { categoryId: _id } = req.params;
+    let categories, responseData;
+    try {
+        categories = await fetchOne(Category, { _id });
+        if (!categories) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Category not found.",
+            });
+        }
+
+        categories = await deleteItem(Category, { _id });
+        responseData = {
+            payload: categories,
+            statusCode: 200,
+            message: "Category deleted sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
 export{
     createCategory,
-    createCategoryType
+    createCategoryType,
+    deleteCategory
 }

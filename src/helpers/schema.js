@@ -55,7 +55,7 @@ export const create = async (schemaName, data) => {
   };
   
   export const deleteItem = async (schemaName, filter) => {
-    let item = await schemaName.findOneAndUpdate(filter, { isDeleted: true });
+    let item = await schemaName.findOneAndDelete(filter);
     return item;
   };
   

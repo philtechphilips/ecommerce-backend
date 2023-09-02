@@ -9,5 +9,6 @@ const Router = express.Router();
 // Router.get("/", auth, UserController.viewProfile);
 Router.post("/create-category", categoryValidator, CategoryController.createCategory);
 Router.patch("/create-category-type", categoryTypeValidator, CategoryController.createCategoryType);
+Router.delete("/delete-category/:categoryId", CategoryController.deleteCategory);
 
 module.exports = Router;
