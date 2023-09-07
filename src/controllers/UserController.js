@@ -455,7 +455,6 @@ const uploadProfileImage = async function (req, res) {
         });
         if (!upload) throw new Error("Error occured while uploading image.");
         profileImgUrl = upload.secure_url;
-        console.log(profileImgUrl)
         user = await update(
             User,
             { _id },
