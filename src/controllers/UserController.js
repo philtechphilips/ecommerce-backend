@@ -466,7 +466,7 @@ const uploadProfileImage = async function (req, res) {
             statusCode: 200,
             message: "Profile image uploaded.",
             payload: user,
-        });
+        }); 
     } catch (error) {
         console.log(error.message);
         return errorResponse(res, {
