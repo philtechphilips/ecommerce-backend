@@ -2,6 +2,7 @@ import { errorResponse, successResponse } from "../helpers/response";
 import { create, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import Category from "../models/category";
 import SubCategory from "../models/subCategory";
+import redis from "../config/redis";
 
 const fetchCategory = async function (req, res) {
     let categories, responseData;
@@ -251,7 +252,17 @@ const createSubCategory = async function (req, res) {
 const fetchSubCategory = async function (req, res) {
     let subCategories, responseData;
     try {
+        subCategories = await redis.get("subCategories");
+        if(subCategories){
+            responseData = {
+                payload: JSON.parse(subCategories),
+                statusCode: 200,
+                message: "Sub Categories fetched sucessfully!",
+            };
+            return successResponse(res, responseData);
+        }
         subCategories = await fetch(SubCategory);
+        redis.set("subCategories", JSON.stringify(subCategories), "EX", 3600);
         responseData = {
             payload: subCategories,
             statusCode: 200,
