@@ -6,8 +6,8 @@ import { create, fetchOne, isUnique, update } from "../helpers/schema";
 import { decodeVerificationToken, generateVerificationToken, hashPassword, saveVerificationToken, validatePassword } from "../utils/base";
 import { sendMail } from "../utils/email";
 import { getYear } from "date-fns";
-import bcrypt from "bcryptjs"
-import redis from "../config/redis";
+const cloudinary = require("../config/cloudinary")
+
 
 dotenv.config();
 
@@ -439,6 +439,43 @@ const resetPassword = async function (req, res) {
     }
 };
 
+const uploadProfileImage = async function (req, res) {
+    const { _id } = req.user;
+    let user, profileImgUrl;
+    try {
+        if (!req.files) {
+            throw new Error("Please upload a valid image.");
+        }
+        const path = req.files.profileImg.tempFilePath;
+        const upload = await cloudinary.uploader.upload(path, {
+            folder: "profileImage",
+            width: 100, 
+            height: 100, 
+            crop: "fill"
+        });
+        if (!upload) throw new Error("Error occured while uploading image.");
+        profileImgUrl = upload.secure_url;
+        console.log(profileImgUrl)
+        user = await update(
+            User,
+            { _id },
+            {
+                profileImgUrl,
+            }
+        );
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Profile image uploaded.",
+            payload: user,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
 
 export {
     verifyEmail,
@@ -450,5 +487,6 @@ export {
     updateProfile,
     forgotPassword,
     verifyResetPassword,
-    resetPassword
+    resetPassword,
+    uploadProfileImage
 }
