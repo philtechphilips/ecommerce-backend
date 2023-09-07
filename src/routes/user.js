@@ -16,5 +16,6 @@ Router.patch("/update-profile", auth, UserController.updateProfile);
 Router.post("/forgot-password", forgotPassword, UserController.forgotPassword);
 Router.post("/verify-forgot-password", userVerification, UserController.verifyResetPassword);
 Router.patch("/reset-password", resetPassword, UserController.resetPassword);
+Router.patch("/profile-image", auth, UserController.uploadProfileImage);
 
 module.exports = Router;

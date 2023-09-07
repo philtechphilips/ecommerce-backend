@@ -43,7 +43,7 @@ const userSchema = mongoose.Schema({
     region: {
         type: String,
     },
-    profile_img_url: {
+    profileImgUrl: {
         type: String,
     },
     isVerified: {
@@ -56,9 +56,6 @@ const userSchema = mongoose.Schema({
         required: true,
         default: true,
     },
-    profilePic: {
-        type: Buffer
-    }
 }, { timestamps: true })
 
 // userSchema.virtual('posts', {
