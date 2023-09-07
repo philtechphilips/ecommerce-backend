@@ -8,7 +8,6 @@ const subCategorySchema = mongoose.Schema({
     categoryType: {
         type: String,
         required: true,
-        unique: true
     },
     subCategories: [{
         subCategory: {
