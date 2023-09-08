@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import safeCompare from "safe-compare";
 import { errorResponse, successResponse } from "../helpers/response";
-import { create, fetch, fetchOne, isUnique, update } from "../helpers/schema";
+import { create, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import Banner from "../models/banner";
 import redis from "../config/redis";
 const cloudinary = require("../config/cloudinary")
@@ -83,7 +83,70 @@ const createBanner = async function (req, res) {
     }
 }
 
+const updateBanner = async function (req, res) {
+    let { id } = req.params
+    let { title, body, buttonText, buttonUrl } = req.body;
+    let banner
+    try {
+        banner = await fetchOne(Banner, { _id: id })
+        if(!banner){
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Banner not found.",
+            });
+        }
+        banner = await update(
+            Banner,
+            { _id: id }, { title, body, buttonText, buttonUrl }
+        );
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Banner updated sucessfully!.",
+            payload: banner,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const deleteBanner = async function (req, res) {
+    let { id } = req.params
+    let banner
+    try {
+        banner = await fetchOne(Banner, { _id: id })
+        if(!banner){
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Banner not found.",
+            });
+        }
+        banner = await deleteItem(
+            Banner,
+            {
+                _id: id
+            }
+        );
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Banner deleted sucessfully!.",
+            payload: banner,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
 export {
     createBanner,
-    fetchBanner
+    fetchBanner,
+    updateBanner,
+    deleteBanner
 }
