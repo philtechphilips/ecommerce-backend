@@ -6,7 +6,7 @@ import { bannerValidator } from "../validators/banner-validator";
 const Router = express.Router();
 
 // Home page Banner Router
-// Router.get("/",);
+Router.get("/", BannerController.fetchBanner);
 Router.post("/create-banner", bannerValidator, BannerController.createBanner);
 
 module.exports = Router;

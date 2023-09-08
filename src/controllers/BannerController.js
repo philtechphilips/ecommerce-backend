@@ -1,13 +1,41 @@
 import dotenv from "dotenv";
 import safeCompare from "safe-compare";
 import { errorResponse, successResponse } from "../helpers/response";
-import { create, fetchOne, isUnique, update } from "../helpers/schema";
+import { create, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import Banner from "../models/banner";
+import redis from "../config/redis";
 const cloudinary = require("../config/cloudinary")
 
 
 dotenv.config();
 
+const fetchBanner = async function (req, res) {
+    let banner;  
+    try {
+        banner = await redis.get("banner");
+        console.log(banner)
+        if(banner){
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Banner fetched sucessfully!.",
+                payload: JSON.parse(banner),
+            });
+        }
+        banner = await fetch(Banner);
+        redis.set("banner", JSON.stringify(banner), "EX", 3600);
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Banner fetched sucessfully!.",
+            payload: banner,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
 
 const createBanner = async function (req, res) {
     let { title, body, buttonText, buttonUrl, image } = req.body;
@@ -42,8 +70,8 @@ const createBanner = async function (req, res) {
             }
         );
         return successResponse(res, {
-            statusCode: 200,
-            message: "Profile image uploaded.",
+            statusCode: 201,
+            message: "Banner Created sucessfully!.",
             payload: banner,
         });
     } catch (error) {
@@ -56,5 +84,6 @@ const createBanner = async function (req, res) {
 }
 
 export {
-    createBanner
+    createBanner,
+    fetchBanner
 }
