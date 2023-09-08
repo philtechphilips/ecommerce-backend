@@ -10,11 +10,11 @@ const cloudinary = require("../config/cloudinary")
 dotenv.config();
 
 const fetchBanner = async function (req, res) {
-    let banner;  
+    let banner;
     try {
         banner = await redis.get("banner");
         console.log(banner)
-        if(banner){
+        if (banner) {
             return successResponse(res, {
                 statusCode: 200,
                 message: "Banner fetched sucessfully!.",
@@ -23,6 +23,34 @@ const fetchBanner = async function (req, res) {
         }
         banner = await fetch(Banner);
         redis.set("banner", JSON.stringify(banner), "EX", 3600);
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Banner fetched sucessfully!.",
+            payload: banner,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const fetchSingleBanner = async function (req, res) {
+    const { id } = req.params
+    let banner;
+    try {
+        banner = await redis.get(`singleBanner-${id}`);
+        if (banner) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Banner fetched sucessfully!.",
+                payload: JSON.parse(banner),
+            });
+        }
+        banner = await fetchOne(Banner, { _id: id });
+        redis.set(`singleBanner-${id}`, JSON.stringify(banner), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Banner fetched sucessfully!.",
@@ -48,7 +76,7 @@ const createBanner = async function (req, res) {
             });
         }
         const uniqueTitle = await isUnique(Banner, { title });
-        if(!uniqueTitle){
+        if (!uniqueTitle) {
             return errorResponse(res, {
                 statusCode: 422,
                 message: "Banner with title exists.",
@@ -89,7 +117,7 @@ const updateBanner = async function (req, res) {
     let banner
     try {
         banner = await fetchOne(Banner, { _id: id })
-        if(!banner){
+        if (!banner) {
             return errorResponse(res, {
                 statusCode: 400,
                 message: "Banner not found.",
@@ -118,7 +146,7 @@ const deleteBanner = async function (req, res) {
     let banner
     try {
         banner = await fetchOne(Banner, { _id: id })
-        if(!banner){
+        if (!banner) {
             return errorResponse(res, {
                 statusCode: 400,
                 message: "Banner not found.",
@@ -147,6 +175,7 @@ const deleteBanner = async function (req, res) {
 export {
     createBanner,
     fetchBanner,
+    fetchSingleBanner,
     updateBanner,
     deleteBanner
 }
