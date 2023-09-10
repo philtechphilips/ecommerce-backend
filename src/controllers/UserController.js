@@ -6,6 +6,7 @@ import { create, fetchOne, isUnique, update } from "../helpers/schema";
 import { decodeVerificationToken, generateVerificationToken, hashPassword, saveVerificationToken, validatePassword } from "../utils/base";
 import { sendMail } from "../utils/email";
 import { getYear } from "date-fns";
+import jwt from "jsonwebtoken";
 const cloudinary = require("../config/cloudinary")
 
 
@@ -146,12 +147,14 @@ const login = async function (req, res) {
                 message: "Please confirm your email to login.",
             });
         }
-        token = await user.generateAuthToken();
+        token = await user.generateAuthToken(); 
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         return successResponse(res, {
             statusCode: 200,
             message: "Login successful.",
             payload: user,
             token,
+            tokenExp: decoded.iat
         });
     } catch (error) {
         console.log(error);
@@ -289,6 +292,7 @@ const viewProfile = async function (req, res) {
 
 const updateProfile = async function (req, res) {
     const { first_name, last_name, phone_number, dob, gender } = req.body;
+    console.log(req.body)
     let { user } = req;
     console.log(user._id)
     try {
@@ -476,6 +480,64 @@ const uploadProfileImage = async function (req, res) {
     }
 }
 
+const getAuthenticatedUser = async function (req, res) {
+    const user = req.user;
+
+    try {
+        if (user) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "User exist!.",
+                payload: user,
+            });
+        } else {
+            return errorResponse(res, {
+                statusCode: 404,
+                message: "User not found!.",
+                payload: user,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const refreshToken = async function (req, res) {
+    const { refreshToken } = req.body;
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+        const user = await User.findOne({ _id: decoded._id });
+
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User not found.",
+            });
+        }
+
+        const accessToken = await user.generateAuthToken();
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Token refreshed successfully.",
+            token: accessToken,
+            tokenExp: decoded.iat
+        });
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occurred while refreshing the token.",
+        });
+    }
+};
+
 export {
     verifyEmail,
     signup,
@@ -487,5 +549,7 @@ export {
     forgotPassword,
     verifyResetPassword,
     resetPassword,
-    uploadProfileImage
+    uploadProfileImage,
+    getAuthenticatedUser,
+    refreshToken
 }

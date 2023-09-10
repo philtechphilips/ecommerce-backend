@@ -7,6 +7,7 @@ const Router = express.Router();
 
 // User Router
 Router.get("/", auth, UserController.viewProfile);
+Router.get("/user-profile", auth, UserController.getAuthenticatedUser);
 Router.post("/verify-email", verifyEmailValidator, UserController.verifyEmail);
 Router.post("/create-account", signUpValidator, UserController.signup);
 Router.post("/login", loginValidator, UserController.login);
@@ -17,5 +18,6 @@ Router.post("/forgot-password", forgotPassword, UserController.forgotPassword);
 Router.post("/verify-forgot-password", userVerification, UserController.verifyResetPassword);
 Router.patch("/reset-password", resetPassword, UserController.resetPassword);
 Router.patch("/profile-image", auth, UserController.uploadProfileImage);
+Router.post("/refresh-token", UserController.refreshToken);
 
 module.exports = Router;
