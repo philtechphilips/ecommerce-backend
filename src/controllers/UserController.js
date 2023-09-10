@@ -506,6 +506,38 @@ const getAuthenticatedUser = async function (req, res) {
     }
 }
 
+const refreshToken = async function (req, res) {
+    const { refreshToken } = req.body;
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+        const user = await User.findOne({ _id: decoded._id });
+
+        if (!user) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "User not found.",
+            });
+        }
+
+        const accessToken = await user.generateAuthToken();
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Token refreshed successfully.",
+            token: accessToken,
+            tokenExp: decoded.iat
+        });
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occurred while refreshing the token.",
+        });
+    }
+};
+
 export {
     verifyEmail,
     signup,
@@ -518,5 +550,6 @@ export {
     verifyResetPassword,
     resetPassword,
     uploadProfileImage,
-    getAuthenticatedUser
+    getAuthenticatedUser,
+    refreshToken
 }
