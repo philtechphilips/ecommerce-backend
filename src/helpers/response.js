@@ -8,11 +8,11 @@ const errorResponse = async (res, data) => {
 };
 
 const successResponse = async (res, data) => {
-  let { payload, statusCode, message, token } = data;
+  let { payload, statusCode, message, token, tokenExp } = data;
   if (safeCompare(token, undefined)) token = null;
   return res
     .status(statusCode)
-    .send({ payload, statusCode, message, status: "success", token });
+    .send({ payload, statusCode, message, status: "success", token, tokenExp });
 };
 
 export { errorResponse, successResponse };

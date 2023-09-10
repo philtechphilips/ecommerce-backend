@@ -7,6 +7,7 @@ const Router = express.Router();
 
 // User Router
 Router.get("/", auth, UserController.viewProfile);
+Router.get("/user-profile", auth, UserController.getAuthenticatedUser);
 Router.post("/verify-email", verifyEmailValidator, UserController.verifyEmail);
 Router.post("/create-account", signUpValidator, UserController.signup);
 Router.post("/login", loginValidator, UserController.login);
