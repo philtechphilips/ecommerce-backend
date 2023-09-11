@@ -149,12 +149,13 @@ const login = async function (req, res) {
         }
         token = await user.generateAuthToken(); 
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decoded)
         return successResponse(res, {
             statusCode: 200,
             message: "Login successful.",
             payload: user,
             token,
-            tokenExp: decoded.iat
+            tokenExp: decoded.exp
         });
     } catch (error) {
         console.log(error);
@@ -526,8 +527,9 @@ const refreshToken = async function (req, res) {
         return successResponse(res, {
             statusCode: 200,
             message: "Token refreshed successfully.",
+            payload: user,
             token: accessToken,
-            tokenExp: decoded.iat
+            tokenExp: decoded.exp
         });
     } catch (error) {
         console.log(error);
