@@ -7,7 +7,17 @@ import redis from "../config/redis";
 const fetchCategory = async function (req, res) {
     let categories, responseData;
     try {
+        categories = await redis.get("categories");
+        if(categories){
+            responseData = {
+                payload: JSON.parse(categories),
+                statusCode: 200,
+                message: "Categories fetched sucessfully!",
+            };
+            return successResponse(res, responseData);
+        }
         categories = await fetch(Category);
+        redis.set("categories", JSON.stringify(categories), "EX", 3600);
         responseData = {
             payload: categories,
             statusCode: 200,
@@ -167,116 +177,116 @@ const deleteCategoryType = async function (req, res) {
     }
 }
 
-const createSubCategory = async function (req, res) {
-    let {
-        categoryId,
-        categoryType,
-        subCategory
-    } = req.body;
+// const createSubCategory = async function (req, res) {
+//     let {
+//         categoryId,
+//         categoryType,
+//         subCategory
+//     } = req.body;
 
-    let subCategories, subcategoryItem, responseData;
-    try {
-        subCategories = await isUnique(SubCategory, { categoryId });
-        if (!subCategories) {
-            subCategories = {
-                categoryId,
-                categoryType
-            };
+//     let subCategories, subcategoryItem, responseData;
+//     try {
+//         subCategories = await isUnique(SubCategory, { categoryId });
+//         if (!subCategories) {
+//             subCategories = {
+//                 categoryId,
+//                 categoryType
+//             };
 
-            subCategories = await fetchOne(SubCategory, { categoryId });
+//             subCategories = await fetchOne(SubCategory, { categoryId });
 
-            const subcategoryItem = subCategories.subCategories.filter((item) => {
-                return item.subCategory === subCategory;
-            });
+//             const subcategoryItem = subCategories.subCategories.filter((item) => {
+//                 return item.subCategory === subCategory;
+//             });
 
-            if (subcategoryItem.length > 0) {
-                return errorResponse(res, {
-                    statusCode: 400,
-                    message: "sub category exist.",
-                });
-            }
+//             if (subcategoryItem.length > 0) {
+//                 return errorResponse(res, {
+//                     statusCode: 400,
+//                     message: "sub category exist.",
+//                 });
+//             }
 
-            subCategories = subCategories.subCategories.concat({ subCategory })
-            // return console.log(subCategories)
-            subCategories = await update(
-                SubCategory, { categoryId }, { subCategories }
-            );
+//             subCategories = subCategories.subCategories.concat({ subCategory })
+//             // return console.log(subCategories)
+//             subCategories = await update(
+//                 SubCategory, { categoryId }, { subCategories }
+//             );
 
-            responseData = {
-                payload: subCategories,
-                statusCode: 201,
-                message: "Sub Category created sucessfully!",
-            };
-            return successResponse(res, responseData);
-        }
-        subCategories = {
-            categoryId,
-            categoryType
-        };
-        subCategories = await create(SubCategory, subCategories);
+//             responseData = {
+//                 payload: subCategories,
+//                 statusCode: 201,
+//                 message: "Sub Category created sucessfully!",
+//             };
+//             return successResponse(res, responseData);
+//         }
+//         subCategories = {
+//             categoryId,
+//             categoryType
+//         };
+//         subCategories = await create(SubCategory, subCategories);
 
-        subCategories = await fetchOne(SubCategory, { categoryId });
+//         subCategories = await fetchOne(SubCategory, { categoryId });
 
-        const subcategoryItem = subCategories.subCategories.filter((item) => {
-            return item.subCategory === subCategory;
-        });
+//         const subcategoryItem = subCategories.subCategories.filter((item) => {
+//             return item.subCategory === subCategory;
+//         });
 
-        if (subcategoryItem.length > 0) {
-            return errorResponse(res, {
-                statusCode: 400,
-                message: "sub category exist.",
-            });
-        }
+//         if (subcategoryItem.length > 0) {
+//             return errorResponse(res, {
+//                 statusCode: 400,
+//                 message: "sub category exist.",
+//             });
+//         }
 
-        subCategories = subCategories.subCategories.concat({ subCategory })
-        // return console.log(subCategories)
-        subCategories = await update(
-            SubCategory, { categoryId }, { subCategories }
-        );
+//         subCategories = subCategories.subCategories.concat({ subCategory })
+//         // return console.log(subCategories)
+//         subCategories = await update(
+//             SubCategory, { categoryId }, { subCategories }
+//         );
 
-        responseData = {
-            payload: subCategories,
-            statusCode: 201,
-            message: "Sub Category created sucessfully!",
-        };
-        return successResponse(res, responseData);
-    } catch (error) {
-        console.log(error);
-        return errorResponse(res, {
-            statusCode: 500,
-            message: "An error occured, pls try again later.",
-        });
-    }
-}
+//         responseData = {
+//             payload: subCategories,
+//             statusCode: 201,
+//             message: "Sub Category created sucessfully!",
+//         };
+//         return successResponse(res, responseData);
+//     } catch (error) {
+//         console.log(error);
+//         return errorResponse(res, {
+//             statusCode: 500,
+//             message: "An error occured, pls try again later.",
+//         });
+//     }
+// }
 
-const fetchSubCategory = async function (req, res) {
-    let subCategories, responseData;
-    try {
-        subCategories = await redis.get("subCategories");
-        if(subCategories){
-            responseData = {
-                payload: JSON.parse(subCategories),
-                statusCode: 200,
-                message: "Sub Categories fetched sucessfully!",
-            };
-            return successResponse(res, responseData);
-        }
-        subCategories = await fetch(SubCategory);
-        redis.set("subCategories", JSON.stringify(subCategories), "EX", 3600);
-        responseData = {
-            payload: subCategories,
-            statusCode: 200,
-            message: "Sub Categories fetched sucessfully!",
-        };
-        return successResponse(res, responseData);
-    } catch (error) {
-        console.log(error);
-        return errorResponse(res, {
-            statusCode: 500,
-            message: "An error occured, pls try again later.",
-        });
-    }
-}
+// const fetchSubCategory = async function (req, res) {
+//     let subCategories, responseData;
+//     try {
+//         subCategories = await redis.get("subCategories");
+//         if(subCategories){
+//             responseData = {
+//                 payload: JSON.parse(subCategories),
+//                 statusCode: 200,
+//                 message: "Sub Categories fetched sucessfully!",
+//             };
+//             return successResponse(res, responseData);
+//         }
+//         subCategories = await fetch(SubCategory);
+//         redis.set("subCategories", JSON.stringify(subCategories), "EX", 3600);
+//         responseData = {
+//             payload: subCategories,
+//             statusCode: 200,
+//             message: "Sub Categories fetched sucessfully!",
+//         };
+//         return successResponse(res, responseData);
+//     } catch (error) {
+//         console.log(error);
+//         return errorResponse(res, {
+//             statusCode: 500,
+//             message: "An error occured, pls try again later.",
+//         });
+//     }
+// }
 
 
 export {
@@ -284,7 +294,5 @@ export {
     createCategoryType,
     deleteCategory,
     deleteCategoryType,
-    fetchCategory,
-    createSubCategory,
-    fetchSubCategory
+    fetchCategory
 }

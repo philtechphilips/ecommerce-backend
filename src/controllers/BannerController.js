@@ -13,7 +13,7 @@ const fetchBanner = async function (req, res) {
     let banner;
     try {
         banner = await redis.get("banner");
-        console.log(banner)
+        // console.log(banner)
         if (banner) {
             return successResponse(res, {
                 statusCode: 200,
