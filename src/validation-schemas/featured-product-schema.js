@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const trendingSchema = Joi.object({
+const featuredProductSchema = Joi.object({
     category: Joi.string().min(3).required(),
     imageUrl: Joi.string().min(3).required(),
     buttonText: Joi.string().min(3).required(),
@@ -8,5 +8,5 @@ const trendingSchema = Joi.object({
 });
 
 export {
-    trendingSchema
+    featuredProductSchema
  }
