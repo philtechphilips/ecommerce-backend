@@ -12,15 +12,15 @@ dotenv.config();
 const fetchBanner = async function (req, res) {
     let banner;
     try {
-        banner = await redis.get("banner");
-        // console.log(banner)
-        if (banner) {
-            return successResponse(res, {
-                statusCode: 200,
-                message: "Banner fetched sucessfully!.",
-                payload: JSON.parse(banner),
-            });
-        }
+        // banner = await redis.get("banner");
+        // // console.log(banner)
+        // if (banner) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Banner fetched sucessfully!.",
+        //         payload: JSON.parse(banner),
+        //     });
+        // }
         banner = await fetch(Banner);
         redis.set("banner", JSON.stringify(banner), "EX", 3600);
         return successResponse(res, {
@@ -66,7 +66,7 @@ const fetchSingleBanner = async function (req, res) {
 }
 
 const createBanner = async function (req, res) {
-    let { title, body, buttonText, buttonUrl, image } = req.body;
+    let { title, body, buttonText, buttonUrl, image, categoryId } = req.body;
     let imageUrl, banner;
     try {
         if (!req.files) {
@@ -94,7 +94,7 @@ const createBanner = async function (req, res) {
         banner = await create(
             Banner,
             {
-                title, body, buttonText, buttonUrl, imageUrl
+                title, body, buttonText, buttonUrl, imageUrl, categoryId
             }
         );
         return successResponse(res, {
