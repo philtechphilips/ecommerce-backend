@@ -2,7 +2,7 @@ import express from "express";
 import userRouter from "../routes/user";
 import categoryRouter from "../routes/category";
 import bannerRouter from "../routes/banner";
-import trendingRouter from "../routes/trending";
+import featuredRouter from "../routes/featured";
 
 const Router = express.Router();
 
@@ -16,7 +16,7 @@ Router.get("/", (req, res) => {
 Router.use("/users", userRouter)
 Router.use("/category", categoryRouter)
 Router.use("/banner", bannerRouter)
-Router.use("/trending", trendingRouter)
+Router.use("/featured", featuredRouter)
 
 Router.use(function (req, res, next) {
     res.status(404).send({ responseCode: 404, message: 'Invalid resource URL', data: [] });
