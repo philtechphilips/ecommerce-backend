@@ -5,7 +5,7 @@ import { featuredValidator } from "../validators/featured-product-validator";
 
 const Router = express.Router();
 
-// Router.get("/", auth, UserController.viewProfile);
+Router.get("/", FeaturedProductController.fetchFeaturedProducts);
 // Router.get("/user-profile", auth, UserController.getAuthenticatedUser);
-Router.post("/create-trending", featuredValidator, FeaturedProductController.createTrending);
+Router.post("/create-featured-product", featuredValidator, FeaturedProductController.createFeaturedProduct);
 module.exports = Router;

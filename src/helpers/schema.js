@@ -29,6 +29,8 @@ export const create = async (schemaName, data) => {
     return data;
   };
   
+ 
+  
   export const fetchOne = async (schemaName, filter, populateOptions = []) => {
     filter = { ...filter, isDeleted: { $ne: true } } 
     let populateField = populateOptions.toString();

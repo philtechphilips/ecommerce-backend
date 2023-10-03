@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
-const bannerSchema = mongoose.Schema({
-    category: {
-        type: String,
+const featuredProductSchema = mongoose.Schema({
+    categoryId: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        unique: true
+        ref: "Category"
     },
     imageUrl: {
         type: String,
@@ -16,8 +16,31 @@ const bannerSchema = mongoose.Schema({
     buttonUrl: {
         type: String,
     },
+    active: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },    
+
 }, { timestamps: true })
 
-const Trending = mongoose.model('Trending', trendingSchema)
+featuredProductSchema.pre("save", function () {
+    this.populate("categoryId");
+});
 
-module.exports = Trending
+featuredProductSchema.pre("findOne", function () {
+    this.populate("categoryId");
+});
+
+featuredProductSchema.pre("find", function () {
+    this.populate("categoryId");
+});
+
+featuredProductSchema.pre("findOneAndUpdate", function () {
+    this.populate("categoryId");
+});
+
+
+const FeauredProduct = mongoose.model('FeauredProduct', featuredProductSchema)
+
+module.exports = FeauredProduct
