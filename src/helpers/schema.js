@@ -90,3 +90,13 @@ export const create = async (schemaName, data) => {
     return data;
   };
   
+
+  export const calculateDiscountPercentage = async (sellingPrice, discountedPrice) => {
+    const originalPrice = parseInt(sellingPrice) + parseInt(discountedPrice);
+    console.log(originalPrice)
+    if (originalPrice <= 0 || discountedPrice <= 0 || originalPrice <= discountedPrice) {
+      throw new Error("Invalid Prices");
+    }
+    const discountPercentage = ((discountedPrice) / originalPrice) * 100;
+    return discountPercentage;
+  }
