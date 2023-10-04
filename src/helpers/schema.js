@@ -36,7 +36,7 @@ export const create = async (schemaName, data) => {
     let populateField = populateOptions.toString();
     let data = await schemaName.findOne(filter).populate(`${populateField}`);
     return data;
-  };
+  }; 
   
   export const update = async (
     schemaName,
@@ -90,3 +90,24 @@ export const create = async (schemaName, data) => {
     return data;
   };
   
+
+  export const calculateDiscountPercentage = async (sellingPrice, discountedPrice) => {
+    const originalPrice = parseInt(sellingPrice) + parseInt(discountedPrice);
+    console.log(originalPrice)
+    if (originalPrice <= 0 || discountedPrice <= 0 || originalPrice <= discountedPrice) {
+      throw new Error("Invalid Prices");
+    }
+    const discountPercentage = ((discountedPrice) / originalPrice) * 100;
+    return discountPercentage;
+  }
+
+  export const createSlug = (title) => {
+    const lowercaseTitle = title.toLowerCase();
+
+    const slug = lowercaseTitle
+      .replace(/[^\w\s-]/g, '') 
+      .replace(/\s+/g, '-')    
+      .replace(/-+/g, '-'); 
+  
+    return slug;
+  }
