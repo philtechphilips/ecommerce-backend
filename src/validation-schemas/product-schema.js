@@ -6,11 +6,8 @@ const productSchema = Joi.object({
     title: Joi.string().min(3).required(),
     details: Joi.string().min(3).required(),
     price: Joi.number().min(3).required(),
-    discount: Joi.number().min(3).required(),
-    // highlights: Joi.array().items(Joi.string()),
+    discount: Joi.number().min(3).required(), 
     instructions: Joi.string().min(3).required(),
-    // sizes: Joi.array().items(Joi.string()),
-    // colors: Joi.array().items(Joi.string()),
     images: Joi.array().items(Joi.object({
         filename: Joi.string().required(),
         size: Joi.number().integer().min(1).required(),

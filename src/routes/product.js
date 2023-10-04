@@ -1,7 +1,6 @@
 import express from "express";
 import * as ProductController from "../controllers/ProductController";
 import { auth } from "../middlewares/auth";
-import { featuredValidator } from "../validators/featured-product-validator";
 import { productValidator } from "../validators/product-validators";
 
 const Router = express.Router();

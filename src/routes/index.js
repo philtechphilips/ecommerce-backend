@@ -18,7 +18,7 @@ Router.use("/users", userRouter)
 Router.use("/category", categoryRouter)
 Router.use("/banner", bannerRouter)
 Router.use("/featured", featuredRouter)
-Router.use("/product", productRouter)
+Router.use("/product", productRouter) 
 
 Router.use(function (req, res, next) {
     res.status(404).send({ responseCode: 404, message: 'Invalid resource URL', data: [] });
