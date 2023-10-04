@@ -148,7 +148,7 @@ const deleteProduct = async function (req, res) {
             message: "An error occured, pls try again later.",
         });
     }
-}
+} 
 
 
 const updateProduct = async function (req, res) {
