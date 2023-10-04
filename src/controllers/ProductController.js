@@ -1,5 +1,5 @@
 import { errorResponse, successResponse } from "../helpers/response";
-import { calculateDiscountPercentage, create, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
+import { calculateDiscountPercentage, create, createSlug, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
 import redis from "../config/redis";
 import Product from "../models/product";
 const cloudinary = require("../config/cloudinary")
@@ -15,7 +15,7 @@ const createProducts = async function (req, res) {
                 message: "Add a product image.",
             });
         }
-        const uniqueTitle = await isUnique(Product, { title, categoryId });
+        const uniqueTitle = await isUnique(Product, { title });
         if (!uniqueTitle) {
             return errorResponse(res, {
                 statusCode: 422,
@@ -43,9 +43,10 @@ const createProducts = async function (req, res) {
             }
         }
         const discountInPercentage = await calculateDiscountPercentage(price, discount);
+        const slug = await createSlug(title);
         product = await create(
             Product,
-            { title, categoryId, categoryType, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors, images }
+            { title, slug, categoryId, categoryType, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors, images }
         );
         return successResponse(res, {
             statusCode: 201,
@@ -89,12 +90,11 @@ const fetchSingleProduct = async function (req, res) {
     }
 }
 
-
-const fetchProducts = async function (req, res) {
+const fetchSingleProductBySlug = async function (req, res) {
+    const { slug } = req.params
     let products;
     try {
-        products = await redis.get("products");
-        // console.log(products)
+        products = await redis.get(`singleproducts-${slug}`);
         if (products) {
             return successResponse(res, {
                 statusCode: 200,
@@ -102,6 +102,41 @@ const fetchProducts = async function (req, res) {
                 payload: JSON.parse(products),
             });
         }
+        products = await fetchOne(Product, { slug });
+        if (products) {
+            redis.set(`singleproducts-${slug}`, JSON.stringify(products), "EX", 3600);
+            return successResponse(res, {
+                statusCode: 200,
+                message: "products fetched sucessfully!.",
+                payload: products,
+            });
+        } else {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Invalid Slug!",
+            });
+        }
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const fetchProducts = async function (req, res) {
+    let products;
+    try {
+        // products = await redis.get("products");
+        // // console.log(products)
+        // if (products) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Products fetched sucessfully!.",
+        //         payload: JSON.parse(products),
+        //     });
+        // }
         products = await fetch(Product);
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
@@ -148,13 +183,13 @@ const deleteProduct = async function (req, res) {
             message: "An error occured, pls try again later.",
         });
     }
-} 
+}
 
 
 const updateProduct = async function (req, res) {
     let { id } = req.params
     let { title, categoryId, categoryType, details, price, discount, highlights, instructions, sizes, colors } = req.body;
-    let product, discountInPercentage
+    let product, discountInPercentage, slug;
 
     try {
         product = await fetchOne(Product, { _id: id })
@@ -164,12 +199,23 @@ const updateProduct = async function (req, res) {
                 message: "Product not found.",
             });
         }
+        const uniqueTitle = await isUnique(Product, { title });
+        if (title) {
+            if (!uniqueTitle) {
+                return errorResponse(res, {
+                    statusCode: 422,
+                    message: "product with title exists.",
+                });
+            }
+            slug = await createSlug(title);
+        }
         if (price && discount) {
             discountInPercentage = await calculateDiscountPercentage(price, discount);
         }
+
         product = await update(
             Product,
-            { _id: id }, { title, categoryId, categoryType, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors }
+            { _id: id }, { title, slug, categoryId, categoryType, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors }
         );
         return successResponse(res, {
             statusCode: 200,
@@ -190,5 +236,6 @@ export {
     fetchProducts,
     fetchSingleProduct,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    fetchSingleProductBySlug
 }

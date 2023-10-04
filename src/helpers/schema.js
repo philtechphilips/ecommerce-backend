@@ -100,3 +100,14 @@ export const create = async (schemaName, data) => {
     const discountPercentage = ((discountedPrice) / originalPrice) * 100;
     return discountPercentage;
   }
+
+  export const createSlug = (title) => {
+    const lowercaseTitle = title.toLowerCase();
+
+    const slug = lowercaseTitle
+      .replace(/[^\w\s-]/g, '') 
+      .replace(/\s+/g, '-')    
+      .replace(/-+/g, '-'); 
+  
+    return slug;
+  }

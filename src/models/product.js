@@ -6,15 +6,19 @@ const productSchemma = mongoose.Schema({
         required: true,
         unique: true
     },
+    slug: {
+        type: String,
+        required: true,
+        unique: true
+    },
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "Category"
     },
     categoryType: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "SubCategory"
+        type: String,
+        required: true
     },
     details: {
         type: String,
