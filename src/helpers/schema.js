@@ -36,7 +36,7 @@ export const create = async (schemaName, data) => {
     let populateField = populateOptions.toString();
     let data = await schemaName.findOne(filter).populate(`${populateField}`);
     return data;
-  };
+  }; 
   
   export const update = async (
     schemaName,
