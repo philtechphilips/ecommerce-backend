@@ -29,8 +29,8 @@ const createProducts = async function (req, res) {
             try {
                 const upload = await cloudinary.uploader.upload(file.tempFilePath, {
                     folder: "products",
-                    width: 500,
-                    height: 600,
+                    width: 300,
+                    height: 350,
                     crop: "fill"
                 }, (error, result) => {
                     if (error) {
@@ -94,14 +94,14 @@ const fetchSingleProductBySlug = async function (req, res) {
     const { slug } = req.params
     let products;
     try {
-        products = await redis.get(`singleproducts-${slug}`);
-        if (products) {
-            return successResponse(res, {
-                statusCode: 200,
-                message: "Products fetched sucessfully!.",
-                payload: JSON.parse(products),
-            });
-        }
+        // products = await redis.get(`singleproducts-${slug}`);
+        // if (products) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Products fetched sucessfully!.",
+        //         payload: JSON.parse(products),
+        //     });
+        // }
         products = await fetchOne(Product, { slug });
         if (products) {
             redis.set(`singleproducts-${slug}`, JSON.stringify(products), "EX", 3600);
@@ -153,6 +153,33 @@ const fetchProducts = async function (req, res) {
     }
 }
 
+const fetchTrendingProducts = async function (req, res) {
+    let products;
+    try {
+        // products = await redis.get("products");
+        // // console.log(products)
+        // if (products) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Products fetched sucessfully!.",
+        //         payload: JSON.parse(products),
+        //     });
+        // }
+        products = await fetch(Product, {isTrending: true});
+        redis.set("products", JSON.stringify(products), "EX", 3600);
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Products fetched sucessfully!.",
+            payload: products,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
 
 const deleteProduct = async function (req, res) {
     let { id } = req.params
@@ -237,5 +264,6 @@ export {
     fetchSingleProduct,
     deleteProduct,
     updateProduct,
-    fetchSingleProductBySlug
+    fetchSingleProductBySlug,
+    fetchTrendingProducts
 }

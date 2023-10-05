@@ -55,6 +55,11 @@ const productSchemma = mongoose.Schema({
     images: {
         type: [String],
         required: true
+    },
+    isTrending: {
+        type: Boolean,
+        required: true,
+        default: false,
     }
 }, { timestamps: true })
 
