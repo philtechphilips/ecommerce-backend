@@ -8,7 +8,7 @@ const Router = express.Router();
 Router.get("/", ProductController.fetchProducts);
 Router.get("/:id", ProductController.fetchSingleProduct);
 Router.get("/fetch-product/:slug", ProductController.fetchSingleProductBySlug);
-Router.get("/trending/fetch-trending-product", ProductController.fetchTrendingProducts);
+Router.get("/trending/fetch-trending-product/:category", ProductController.fetchTrendingProducts);
 Router.post("/create-product", productValidator, ProductController.createProducts);
 Router.delete("/delete-product/:id",  ProductController.deleteProduct);
 Router.patch("/update-product/:id",  ProductController.updateProduct);

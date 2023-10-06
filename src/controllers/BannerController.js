@@ -11,15 +11,15 @@ dotenv.config();
 const fetchBanner = async function (req, res) {
     let banner;
     try {
-        banner = await redis.get("banner");
-        // console.log(banner)
-        if (banner) {
-            return successResponse(res, {
-                statusCode: 200,
-                message: "Banner fetched sucessfully!.",
-                payload: JSON.parse(banner),
-            });
-        }
+        // banner = await redis.get("banner");
+        // // console.log(banner)
+        // if (banner) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Banner fetched sucessfully!.",
+        //         payload: JSON.parse(banner),
+        //     });
+        // }
         banner = await fetch(Banner);
         redis.set("banner", JSON.stringify(banner), "EX", 3600);
         return successResponse(res, {

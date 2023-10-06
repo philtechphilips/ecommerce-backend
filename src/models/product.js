@@ -75,6 +75,16 @@ productSchemma.pre("find", function () {
     this.populate("categoryId");
 });
 
+productSchemma.pre("aggregate", async function () {
+    this.lookup({
+      from: "categories", 
+      localField: "categoryId",
+      foreignField: "_id",
+      as: "categoryId"
+    });
+  });
+  
+
 productSchemma.pre("findOneAndUpdate", function () {
     this.populate("categoryId");
 });

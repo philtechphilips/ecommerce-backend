@@ -1,5 +1,5 @@
 import { errorResponse, successResponse } from "../helpers/response";
-import { calculateDiscountPercentage, create, createSlug, deleteItem, fetch, fetchOne, isUnique, update } from "../helpers/schema";
+import { calculateDiscountPercentage, create, createSlug, deleteItem, fetch, fetchInRandomOrder, fetchOne, isUnique, update } from "../helpers/schema";
 import redis from "../config/redis";
 import Product from "../models/product";
 const cloudinary = require("../config/cloudinary")
@@ -137,7 +137,7 @@ const fetchProducts = async function (req, res) {
         //         payload: JSON.parse(products),
         //     });
         // }
-        products = await fetch(Product);
+        products = await fetchInRandomOrder(20, Product);
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -154,6 +154,7 @@ const fetchProducts = async function (req, res) {
 }
 
 const fetchTrendingProducts = async function (req, res) {
+    const { category } = req.params
     let products;
     try {
         // products = await redis.get("products");
@@ -165,7 +166,8 @@ const fetchTrendingProducts = async function (req, res) {
         //         payload: JSON.parse(products),
         //     });
         // }
-        products = await fetch(Product, {isTrending: true});
+        products = await fetch(Product, {isTrending: true, categoryId: category });
+        console.log(products)
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -215,7 +217,7 @@ const deleteProduct = async function (req, res) {
 
 const updateProduct = async function (req, res) {
     let { id } = req.params
-    let { title, categoryId, categoryType, details, price, discount, highlights, instructions, sizes, colors } = req.body;
+    let { title, categoryId, categoryType, details, price, isTrending, discount, highlights, instructions, sizes, colors } = req.body;
     let product, discountInPercentage, slug;
 
     try {
@@ -242,7 +244,7 @@ const updateProduct = async function (req, res) {
 
         product = await update(
             Product,
-            { _id: id }, { title, slug, categoryId, categoryType, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors }
+            { _id: id }, { title, slug, categoryId, categoryType, isTrending, details, price, discount, discountInPercentage, highlights, instructions, sizes, colors }
         );
         return successResponse(res, {
             statusCode: 200,

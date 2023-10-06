@@ -116,6 +116,9 @@ export const create = async (schemaName, data) => {
     filter = { ...filter, isDeleted: { $ne: true } }
     let populateField = populateOptions.toString();
     let data = await schemaName
-      .aggregate([{$sample: {size}}]);
+      .aggregate([{$sample: {size}}, { $match: filter }])
+      
     return data;
   }
+  
+ 
