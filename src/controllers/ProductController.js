@@ -167,7 +167,36 @@ const fetchTrendingProducts = async function (req, res) {
         //     });
         // }
         products = await fetch(Product, {isTrending: true, categoryId: category });
-        console.log(products)
+        redis.set("products", JSON.stringify(products), "EX", 3600);
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Products fetched sucessfully!.",
+            payload: products,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+
+const fetchShopProducts = async function (req, res) {
+    const { category, categoryType } = req.params
+    let products;
+    try {
+        // products = await redis.get("products");
+        // // console.log(products)
+        // if (products) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Products fetched sucessfully!.",
+        //         payload: JSON.parse(products),
+        //     });
+        // }
+        products = await fetch(Product, { categoryId: category, categoryType});
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -267,5 +296,6 @@ export {
     deleteProduct,
     updateProduct,
     fetchSingleProductBySlug,
-    fetchTrendingProducts
+    fetchTrendingProducts,
+    fetchShopProducts 
 }
