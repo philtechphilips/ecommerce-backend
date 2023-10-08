@@ -111,3 +111,14 @@ export const create = async (schemaName, data) => {
   
     return slug;
   }
+
+  export const fetchInRandomOrder = async (size, schemaName, filter = {}, populateOptions = []) => {
+    filter = { ...filter, isDeleted: { $ne: true } }
+    let populateField = populateOptions.toString();
+    let data = await schemaName
+      .aggregate([{$sample: {size}}, { $match: filter }])
+      
+    return data;
+  }
+  
+ 

@@ -55,6 +55,11 @@ const productSchemma = mongoose.Schema({
     images: {
         type: [String],
         required: true
+    },
+    isTrending: {
+        type: Boolean,
+        required: true,
+        default: false,
     }
 }, { timestamps: true })
 
@@ -69,6 +74,16 @@ productSchemma.pre("findOne", function () {
 productSchemma.pre("find", function () {
     this.populate("categoryId");
 });
+
+productSchemma.pre("aggregate", async function () {
+    this.lookup({
+      from: "categories", 
+      localField: "categoryId",
+      foreignField: "_id",
+      as: "categoryId"
+    });
+  });
+  
 
 productSchemma.pre("findOneAndUpdate", function () {
     this.populate("categoryId");

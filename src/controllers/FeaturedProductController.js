@@ -54,17 +54,17 @@ const createFeaturedProduct = async function (req, res) {
 const fetchFeaturedProducts = async function (req, res) {
     let featuredProduct;
     try {
-        featuredProduct = await redis.get("featuredProduct");
-        // console.log(featuredProduct)
-        if (featuredProduct) {
-            return successResponse(res, {
-                statusCode: 200,
-                message: "Featured Product fetched sucessfully!.",
-                payload: JSON.parse(featuredProduct),
-            });
-        }
+        // featuredProduct = await redis.get("featuredProduct");
+        // // console.log(featuredProduct)
+        // if (featuredProduct) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Featured Product fetched sucessfully!.",
+        //         payload: JSON.parse(featuredProduct),
+        //     });
+        // }
         featuredProduct = await fetch(FeaturedProduct, {active: true});
-        redis.set("featuredProduct", JSON.stringify(featuredProduct), "EX", 3600);
+        // redis.set("featuredProduct", JSON.stringify(featuredProduct), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Featured Product fetched sucessfully!.",
