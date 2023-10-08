@@ -42,15 +42,26 @@ const productSchemma = mongoose.Schema({
     },
     instructions: {
         type: String,
-        required: true 
-    },
-    sizes: {
-        type: [String],
         required: true
     },
-    colors: {
-        type: [String],
-        required: true
+    sizes: [{
+        size: {
+            type: String,
+        },
+        quantity: {
+            type: Number,
+        }
+    }],
+    colors: [{
+        color: {
+            type: String,
+        },
+        quantity: {
+            type: Number,
+        }
+    }],
+    quantity: {
+        type: Number,
     },
     images: {
         type: [String],
@@ -77,13 +88,13 @@ productSchemma.pre("find", function () {
 
 productSchemma.pre("aggregate", async function () {
     this.lookup({
-      from: "categories", 
-      localField: "categoryId",
-      foreignField: "_id",
-      as: "categoryId"
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "categoryId"
     });
-  });
-  
+});
+
 
 productSchemma.pre("findOneAndUpdate", function () {
     this.populate("categoryId");
