@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema({
         required: true,
         default: 'user'
     },
-    house_address: {
+    home_address: {
         type: String,
     },
     city: {

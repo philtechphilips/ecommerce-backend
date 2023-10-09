@@ -147,7 +147,7 @@ const login = async function (req, res) {
                 message: "Please confirm your email to login.",
             });
         }
-        token = await user.generateAuthToken(); 
+        token = await user.generateAuthToken();
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         console.log(decoded)
         return successResponse(res, {
@@ -292,8 +292,14 @@ const viewProfile = async function (req, res) {
 };
 
 const updateProfile = async function (req, res) {
-    const { first_name, last_name, phone_number, dob, gender } = req.body;
-    console.log(req.body)
+    const { first_name,
+        last_name,
+        phone_number,
+        dob,
+        gender,
+        home_address,
+        city,
+        region } = req.body;
     let { user } = req;
     console.log(user._id)
     try {
@@ -305,7 +311,10 @@ const updateProfile = async function (req, res) {
                 last_name,
                 phone_number,
                 dob,
-                gender
+                gender,
+                home_address,
+                city,
+                region
             }
         );
         return successResponse(res, {
@@ -454,8 +463,8 @@ const uploadProfileImage = async function (req, res) {
         const path = req.files.profileImg.tempFilePath;
         const upload = await cloudinary.uploader.upload(path, {
             folder: "profileImage",
-            width: 100, 
-            height: 100, 
+            width: 100,
+            height: 100,
             crop: "fill"
         });
         if (!upload) throw new Error("Error occured while uploading image.");
@@ -471,7 +480,7 @@ const uploadProfileImage = async function (req, res) {
             statusCode: 200,
             message: "Profile image uploaded.",
             payload: user,
-        }); 
+        });
     } catch (error) {
         console.log(error.message);
         return errorResponse(res, {
