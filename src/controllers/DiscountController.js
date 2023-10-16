@@ -40,7 +40,7 @@ const createDiscount = async function (req, res) {
 
 
 const fetchDiscount = async function (req, res) {
-    const { code } = req.body;
+    const { code } = req.params;
     let discount;
     try {
         // discount = await redis.get("discount");
@@ -52,6 +52,7 @@ const fetchDiscount = async function (req, res) {
         //         payload: JSON.parse(discount),
         //     });
         // }
+        console.log(code)
         discount = await fetchOne(Discount, { code })
         if (!discount) {
             return errorResponse(res, {

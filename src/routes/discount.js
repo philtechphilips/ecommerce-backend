@@ -6,7 +6,7 @@ import { discountValidator } from "../validators/discount-validator";
 const Router = express.Router();
 
 // Home page discount Router
-Router.get("/",  DiscountController.fetchDiscount);
+Router.get("/:code",  DiscountController.fetchDiscount);
 // Router.get("/:id", discountController.fetchSinglediscount);
 Router.post("/create-discount", auth, discountValidator, DiscountController.createDiscount);
 // Router.patch("/update-discount/:id", auth, discountController.updatediscount);

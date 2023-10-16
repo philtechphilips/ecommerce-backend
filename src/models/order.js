@@ -1,6 +1,6 @@
 const { boolean } = require('joi')
 const mongoose = require('mongoose')
-const cartSchema = mongoose.Schema({
+const orderSchema = mongoose.Schema({
     productId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -11,42 +11,41 @@ const cartSchema = mongoose.Schema({
         required: true,
         ref: "User"
     },
-    color: {
+    orderId: {
         type: String,
+        required: true
     },
-    size: {
+    paymentReference: {
         type: String,
+        required: true
     },
-    cartQuantity: {
-        type: Number,
-    },
-    isPurchased:{
-        type: Boolean,
+    orderStatus: {
+        type: String,
         required: true,
-        default: false
-    }
+        default: "Order Placed Sucessfully"
+    },
 }, { timestamps: true })
 
-cartSchema.pre("save", function () {
+orderSchema.pre("save", function () {
     this.populate("productId");
     this.populate("userId");
 });
 
-cartSchema.pre("findOne", function () {
+orderSchema.pre("findOne", function () {
     this.populate("productId");
     this.populate("userId");
 });
 
-cartSchema.pre("find", function () {
+orderSchema.pre("find", function () {
     this.populate("productId");
     this.populate("userId");
 });
 
-cartSchema.pre("findOneAndUpdate", function () {
+orderSchema.pre("findOneAndUpdate", function () {
     this.populate("productId");
     this.populate("userId");
 });
 
-const Cart = mongoose.model('Cart', cartSchema)
+const Order = mongoose.model('Order', orderSchema)
 
-module.exports = Cart
+module.exports = Order
