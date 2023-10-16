@@ -24,6 +24,9 @@ const cartSchema = mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    paymentReference:{
+        type: String,
     }
 }, { timestamps: true })
 

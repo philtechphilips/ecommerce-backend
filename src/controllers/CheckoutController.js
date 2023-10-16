@@ -38,10 +38,10 @@ const verifyPayment = async function (req, res) {
             };
             await create(Payment, payment);
 
-            let cart, isPurchased, orders;
-            cart = await fetch(Cart, { userId: user._id });
+            let cart, orders;
+            cart = await fetch(Cart, { userId: user._id, isPurchased: false });
             for (const cartItem of cart) {
-                cart = await update(Cart, { userId: user._id, isPurchased: false }, { isPurchased: true });
+                cart = await update(Cart, { _id: cartItem._id, userId: user._id, isPurchased: false }, { isPurchased: true, paymentReference: reference });
                 orders = {
                     userId: user._id,
                     productId: cartItem.productId._id,
@@ -63,6 +63,7 @@ const verifyPayment = async function (req, res) {
             });
         }
     } catch (error) {
+        console.log(error)
         return errorResponse(res, {
             statusCode: 500,
             message: "An error occurred, please try again later.",

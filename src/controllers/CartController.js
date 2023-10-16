@@ -20,7 +20,7 @@ const fetchcart = async function (req, res) {
         //         payload: JSON.parse(cart),
         //     });
         // }
-        cart = await fetch(Cart, {userId: user._id});
+        cart = await fetch(Cart, {userId: user._id, isPurchased: false});
         redis.set("cart", JSON.stringify(cart), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -48,7 +48,7 @@ const fetchSinglecart = async function (req, res) {
                 payload: JSON.parse(cart),
             });
         }
-        cart = await fetchOne(cart, { _id: id });
+        cart = await fetchOne(cart, { _id: id,  isPurchased: false });
         redis.set(`singlecart-${id}`, JSON.stringify(cart), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
