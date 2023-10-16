@@ -15,6 +15,15 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    color: {
+        type: String,
+    },
+    size: {
+        type: String,
+    },
+    quantity: {
+        type: String,
+    },
     paymentReference: {
         type: String,
         required: true

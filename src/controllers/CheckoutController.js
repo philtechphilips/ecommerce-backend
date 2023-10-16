@@ -25,8 +25,8 @@ const verifyPayment = async function (req, res) {
 
     try {
         const response = await axiosInstance.get(endpoint);
-        
-        if (response.status === 200) { 
+
+        if (response.status === 200) {
             const verification = response.data.data;
             const payment = {
                 userId: user._id,
@@ -46,7 +46,10 @@ const verifyPayment = async function (req, res) {
                     userId: user._id,
                     productId: cartItem.productId._id,
                     orderId: Date.now(),
-                    paymentReference: reference
+                    paymentReference: reference,
+                    size: cartItem.size,
+                    color: cartItem.color,
+                    quantity: cartItem.selectedQuantity
                 };
                 await create(Order, orders);
             }
@@ -71,8 +74,66 @@ const verifyPayment = async function (req, res) {
     }
 };
 
+const fetchOrderByTxRef = async function (req, res) {
+    const { user } = req;
+    const { txref } = req.params;
+    try {
+        const orders = await fetch(Cart, { userId: user._id, paymentReference: txref });
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Orders fetched successfully!",
+            payload: orders,
+        });
+    } catch (error) {
+        console.log(error)
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occurred, please try again later.",
+        });
+    }
+};
 
+const fetchOrder = async function (req, res) {
+    const { user } = req;
+    try {
+        const orders = await fetch(Order, { userId: user._id });
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Orders fetched successfully!",
+            payload: orders,
+        });
+    } catch (error) {
+        console.log(error)
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occurred, please try again later.",
+        });
+    }
+};
+
+
+const fetchPaymentByTxRef = async function (req, res) {
+    const { user } = req;
+    const { txref } = req.params;
+    try {
+        const payments = await fetch(Payment, { userId: user._id, paymentReference: txref });
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Payments fetched successfully!",
+            payload: payments,
+        });
+    } catch (error) {
+        console.log(error)
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occurred, please try again later.",
+        });
+    }
+};
 
 export {
-    verifyPayment
+    verifyPayment,
+    fetchOrderByTxRef,
+    fetchPaymentByTxRef,
+    fetchOrder 
 }
