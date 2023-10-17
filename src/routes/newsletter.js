@@ -6,7 +6,7 @@ import { newsletterValidator } from "../validators/newsletter-validator";
 const Router = express.Router();
 
 // Notification cart Router
-Router.post("/", auth, newsletterValidator, NewsletterController.create);
+Router.post("/", newsletterValidator, NewsletterController.subscribe);
 
 
 module.exports = Router;

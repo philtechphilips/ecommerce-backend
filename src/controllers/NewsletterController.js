@@ -7,11 +7,11 @@ import Newsletter from "../models/newsletter";
 
 dotenv.config();
 
-const create = async function (req, res) {
-    const { email } = req;
+const subscribe = async function (req, res) {
+    const { email } = req.body;
     let newsletter;
     try {
-        newsletter = await fetch(Newsletter, {email});
+        newsletter = await create(Newsletter, {email});
         return successResponse(res, {
             statusCode: 200,
             message: "Newsletter subscribed sucessfully!.",
@@ -28,5 +28,5 @@ const create = async function (req, res) {
 
 
 export {
-   create
+   subscribe
 }
