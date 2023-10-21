@@ -1,7 +1,8 @@
 import { errorResponse, successResponse } from "../helpers/response";
-import { calculateDiscountPercentage, create, createSlug, deleteItem, fetch, fetchInRandomOrder, fetchOne, isUnique, update } from "../helpers/schema";
+import { calculateDiscountPercentage, create, createSlug, deleteItem, fetch, fetchInRandomOrder, fetchOne, isUnique, selectFetch, update } from "../helpers/schema";
 import redis from "../config/redis";
 import Product from "../models/product";
+import mongoose from "mongoose";
 const cloudinary = require("../config/cloudinary")
 
 
@@ -166,7 +167,7 @@ const fetchTrendingProducts = async function (req, res) {
         //         payload: JSON.parse(products),
         //     });
         // }
-        products = await fetch(Product, {isTrending: true, categoryId: category });
+        products = await fetch(Product, { isTrending: true, categoryId: category });
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -196,7 +197,7 @@ const fetchShopProducts = async function (req, res) {
         //         payload: JSON.parse(products),
         //     });
         // }
-        products = await fetch(Product, { categoryId: category, categoryType});
+        products = await fetch(Product, { categoryId: category, categoryType });
         redis.set("products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
@@ -289,6 +290,42 @@ const updateProduct = async function (req, res) {
     }
 }
 
+const searchProduct = async function (req, res) {
+    let { query } = req.params
+    let product
+    if (!query) {
+        return errorResponse(res, {
+            statusCode: 400,
+            message: "No query!",
+        });
+    }
+    try {
+        product = await Product.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { categoryType: { $regex: query, $options: 'i' } },
+            ],
+        }).limit(5);
+        if (!product) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "No product found!",
+            });
+        }
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Product fetched sucessfully!.",
+            payload: product,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
 export {
     createProducts,
     fetchProducts,
@@ -297,5 +334,6 @@ export {
     updateProduct,
     fetchSingleProductBySlug,
     fetchTrendingProducts,
-    fetchShopProducts 
+    fetchShopProducts,
+    searchProduct
 }

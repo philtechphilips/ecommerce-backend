@@ -6,6 +6,7 @@ import Cart from "../models/cart";
 import axios from "axios";
 import Order from "../models/order";
 import Payment from "../models/payment";
+import Notification from "../models/notification";
 
 
 dotenv.config();
@@ -38,7 +39,7 @@ const verifyPayment = async function (req, res) {
             };
             await create(Payment, payment);
 
-            let cart, orders;
+            let cart, orders, notification;
             cart = await fetch(Cart, { userId: user._id, isPurchased: false });
             for (const cartItem of cart) {
                 cart = await update(Cart, { _id: cartItem._id, userId: user._id, isPurchased: false }, { isPurchased: true, paymentReference: reference });
@@ -51,7 +52,13 @@ const verifyPayment = async function (req, res) {
                     color: cartItem.color,
                     quantity: cartItem.selectedQuantity
                 };
+                notification ={
+                    title: "Order Successfull!",
+                    userId: user._id,
+                    notification: `Your item in Order No. ${orders.orderId} has been submitted sucessfully!`
+                };
                 await create(Order, orders);
+                await create(Notification, notification);
             }
 
             return successResponse(res, {

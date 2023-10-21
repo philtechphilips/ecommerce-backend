@@ -7,6 +7,8 @@ import productRouter from "../routes/product";
 import cartRouter from "../routes/cart";
 import discountRouter from "../routes/discount";
 import checkoutRouter from "../routes/checkout";
+import notificationRouter from "../routes/notification";
+import newsletterRouter from "../routes/newsletter";
 
 const Router = express.Router();
 
@@ -17,14 +19,16 @@ Router.get("/", (req, res) => {
     })
 })
 
-Router.use("/users", userRouter)
-Router.use("/category", categoryRouter)
-Router.use("/banner", bannerRouter)
-Router.use("/featured", featuredRouter)
-Router.use("/product", productRouter) 
-Router.use("/cart", cartRouter)
-Router.use("/discount", discountRouter) 
-Router.use("/checkout", checkoutRouter) 
+Router.use("/users", userRouter);
+Router.use("/category", categoryRouter);
+Router.use("/banner", bannerRouter);
+Router.use("/featured", featuredRouter);
+Router.use("/product", productRouter); 
+Router.use("/cart", cartRouter);
+Router.use("/discount", discountRouter); 
+Router.use("/checkout", checkoutRouter); 
+Router.use("/notification", notificationRouter); 
+Router.use("/newsletter", newsletterRouter); 
 
 Router.use(function (req, res, next) {
     res.status(404).send({ responseCode: 404, message: 'Invalid resource URL', data: [] });
