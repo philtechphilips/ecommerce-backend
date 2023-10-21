@@ -83,7 +83,7 @@ export const create = async (schemaName, data) => {
     filter = { ...filter, isDeleted: { $ne: true } }
     let populateField = populateOptions.toString();
     let data = await schemaName
-      .findOne(filter)
+      .find(filter)
       .select(select)
       .populate(`${populateField}`)
       .lean();
