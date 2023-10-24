@@ -9,6 +9,7 @@ import discountRouter from "../routes/discount";
 import checkoutRouter from "../routes/checkout";
 import notificationRouter from "../routes/notification";
 import newsletterRouter from "../routes/newsletter";
+import headerBarRouter from "../routes/header-bar";
 
 const Router = express.Router();
 
@@ -29,6 +30,7 @@ Router.use("/discount", discountRouter);
 Router.use("/checkout", checkoutRouter); 
 Router.use("/notification", notificationRouter); 
 Router.use("/newsletter", newsletterRouter); 
+Router.use("/header-bar", headerBarRouter); 
 
 Router.use(function (req, res, next) {
     res.status(404).send({ responseCode: 404, message: 'Invalid resource URL', data: [] });
