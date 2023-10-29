@@ -1,7 +1,7 @@
 import express from "express";
 import * as UserController from "../controllers/UserController";
 import { loginValidator, forgotPassword, signUpValidator, userVerification, verifyEmailValidator, resetPassword } from "../validators/user-validator";
-import { auth } from "../middlewares/auth";
+import { auth, adminAuth } from "../middlewares/auth";
 
 const Router = express.Router();
 
@@ -10,6 +10,10 @@ Router.get("/", auth, UserController.viewProfile);
 Router.get("/user-profile", auth, UserController.getAuthenticatedUser);
 Router.post("/verify-email", verifyEmailValidator, UserController.verifyEmail);
 Router.post("/create-account", signUpValidator, UserController.signup);
+Router.post("/add-admin", adminAuth, UserController.addAdmin);
+Router.get("/fetch-admin", adminAuth, UserController.viewAdmin);
+Router.get("/fetch-user", adminAuth, UserController.viewUser);
+Router.delete("/delete-admin/:id", adminAuth, UserController.deleteAdmin);
 Router.post("/login", loginValidator, UserController.login);
 Router.post("/verify-account", userVerification, UserController.verifyOTP);
 Router.post("/resend-verification-token", verifyEmailValidator, UserController.resendVerificationToken);

@@ -29,3 +29,33 @@ export const auth = async function (req, res, next) {
     });
   }
 };
+
+export const adminAuth = async function (req, res, next) {
+  let token;
+  try {
+    token = sanitize(req.header("Authorization"));
+    token = token.replace("Bearer ", "");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await fetchOne(User, { _id: decoded._id, "tokens.token": token });
+    if (!user) throw new Error("User not found");
+    if (user.role != "admin") {
+      return errorResponse(res, {
+        statusCode: 401,
+        payload: null,
+        message: "Authentication required",
+        status: "failure",
+      });
+    }
+
+    req.token = token;
+    req.user = user;
+    next()
+  } catch (error) {
+    return errorResponse(res, {
+      statusCode: 401,
+      payload: null,
+      message: "Authentication required",
+      status: "failure",
+    });
+  }
+};

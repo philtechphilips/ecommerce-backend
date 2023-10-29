@@ -17,7 +17,7 @@ const fetchCategory = async function (req, res) {
             return successResponse(res, responseData);
         }
         categories = await fetch(Category);
-        redis.set("categories", JSON.stringify(categories), "EX", 3600);
+        redis.set("categories", JSON.stringify(categories), "EX", 300);
         responseData = {
             payload: categories,
             statusCode: 200,
