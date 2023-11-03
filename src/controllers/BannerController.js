@@ -68,7 +68,7 @@ const createBanner = async function (req, res) {
     let { title, body, buttonText, buttonUrl, image, categoryId } = req.body;
     let imageUrl, banner;
     try {
-        if (!req.files) {
+        if (!image) {
             return errorResponse(res, {
                 statusCode: 422,
                 message: "Add a banner image.",
@@ -81,8 +81,8 @@ const createBanner = async function (req, res) {
                 message: "Banner with title exists.",
             });
         }
-        const path = req.files.image.tempFilePath;
-        const upload = await cloudinary.uploader.upload(path, {
+        // const path = req.files.image.tempFilePath;
+        const upload = await cloudinary.uploader.upload(image, {
             folder: "bannerImage",
             width: 1320,
             height: 400,

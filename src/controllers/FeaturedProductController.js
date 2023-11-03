@@ -5,10 +5,10 @@ import redis from "../config/redis";
 const cloudinary = require("../config/cloudinary")
 
 const createFeaturedProduct = async function (req, res) {
-    let { buttonText, buttonUrl, categoryId } = req.body;
+    let { buttonText, buttonUrl, categoryId, image } = req.body;
     let imageUrl, featuredProduct;
     try {
-        if (!req.files) {
+        if (!image) {
             return errorResponse(res, {
                 statusCode: 422,
                 message: "Add a product image.",
@@ -21,8 +21,8 @@ const createFeaturedProduct = async function (req, res) {
                 message: "Featured product with title exist!.",
             });
         }
-        const path = req.files.image.tempFilePath;
-        const upload = await cloudinary.uploader.upload(path, {
+        
+        const upload = await cloudinary.uploader.upload(image, {
             folder: "featuredProduct",
             width: 500,
             height: 600,
