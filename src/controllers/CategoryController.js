@@ -7,17 +7,17 @@ import redis from "../config/redis";
 const fetchCategory = async function (req, res) {
     let categories, responseData;
     try {
-        categories = await redis.get("categories");
-        if(categories){
-            responseData = {
-                payload: JSON.parse(categories),
-                statusCode: 200,
-                message: "Categories fetched sucessfully!",
-            };
-            return successResponse(res, responseData);
-        }
+        // categories = await redis.get("categories");
+        // if(categories){
+        //     responseData = {
+        //         payload: JSON.parse(categories),
+        //         statusCode: 200,
+        //         message: "Categories fetched sucessfully!",
+        //     };
+        //     return successResponse(res, responseData);
+        // }
         categories = await fetch(Category);
-        redis.set("categories", JSON.stringify(categories), "EX", 3600);
+        redis.set("categories", JSON.stringify(categories), "EX", 300);
         responseData = {
             payload: categories,
             statusCode: 200,

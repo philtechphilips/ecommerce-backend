@@ -6,6 +6,7 @@ const bannerSchema = Joi.object({
     body: Joi.string().min(2),
     buttonText: Joi.string().min(2),
     buttonUrl: Joi.string().min(2),
+    image: Joi.required(),
 });
 
 

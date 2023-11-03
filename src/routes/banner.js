@@ -8,7 +8,7 @@ const Router = express.Router();
 // Home page Banner Router
 Router.get("/", BannerController.fetchBanner);
 Router.get("/:id", BannerController.fetchSingleBanner);
-Router.post("/create-banner", bannerValidator, BannerController.createBanner);
+Router.post("/create-banner",  BannerController.createBanner);
 Router.patch("/update-banner/:id", BannerController.updateBanner);
 Router.delete("/delete-banner/:id", BannerController.deleteBanner);
 
