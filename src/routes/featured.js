@@ -6,6 +6,7 @@ import { featuredValidator } from "../validators/featured-product-validator";
 const Router = express.Router();
 
 Router.get("/", FeaturedProductController.fetchFeaturedProducts);
+Router.get("/fetch-all-featured-product", FeaturedProductController.fetchActiveFeaturedProducts);
 Router.get("/:id", FeaturedProductController.fetchSingleFeaturedProducts);
 Router.post("/create-featured-product",  FeaturedProductController.createFeaturedProduct);
 Router.delete("/delete-featured-product/:id",  FeaturedProductController.deleteFeaturedProduct);

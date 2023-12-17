@@ -102,7 +102,7 @@ const createBanner = async function (req, res) {
             payload: banner,
         });
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         return errorResponse(res, {
             statusCode: 500,
             message: "An error occured, pls try again later.",

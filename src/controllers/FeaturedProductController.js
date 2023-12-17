@@ -50,8 +50,35 @@ const createFeaturedProduct = async function (req, res) {
     }
 }
 
-
 const fetchFeaturedProducts = async function (req, res) {
+    let featuredProduct;
+    try {
+        // featuredProduct = await redis.get("activeFeaturedProduct");
+        // // console.log(featuredProduct)
+        // if (featuredProduct) {
+        //     return successResponse(res, {
+        //         statusCode: 200,
+        //         message: "Featured Product fetched sucessfully!.",
+        //         payload: JSON.parse(featuredProduct),
+        //     });
+        // }
+        featuredProduct = await fetch(FeaturedProduct);
+        // redis.set("featuredProduct", JSON.stringify(activeFeaturedProduct), "EX", 3600);
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Featured Product fetched sucessfully!.",
+            payload: featuredProduct,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const fetchActiveFeaturedProducts = async function (req, res) {
     let featuredProduct;
     try {
         // featuredProduct = await redis.get("featuredProduct");
@@ -175,5 +202,6 @@ export {
     fetchFeaturedProducts,
     fetchSingleFeaturedProducts,
     deleteFeaturedProduct,
-    updateFeaturedProduct
+    updateFeaturedProduct,
+    fetchActiveFeaturedProducts
 }
