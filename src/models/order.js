@@ -31,7 +31,7 @@ const orderSchema = mongoose.Schema({
     orderStatus: {
         type: String,
         required: true,
-        default: "Order Placed Sucessfully"
+        default: "Submitted"
     },
 }, { timestamps: true })
 
