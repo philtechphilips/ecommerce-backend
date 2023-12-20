@@ -7,10 +7,10 @@ const cloudinary = require("../config/cloudinary")
 
 
 const createProducts = async function (req, res) {
-    let { title, categoryId, categoryType, details, price, discount, highlights, instructions, sizes, colors } = req.body;
+    let { title, categoryId, categoryType, details, price, discount, highlights, instructions, sizes, colors, image } = req.body;
     let imageUrl, product;
     try {
-        if (!req.files) {
+        if (!image) {
             return errorResponse(res, {
                 statusCode: 422,
                 message: "Add a product image.",
@@ -23,12 +23,12 @@ const createProducts = async function (req, res) {
                 message: "product with title exists.",
             });
         }
-        const files = req.files.images;
         let images = []
-        // Loop through each file and upload to Cloudinary
-        for (const file of files) {
+        // Loop through image and upload to Cloudinary
+        for (image of image) {
+            console.log(image);
             try {
-                const upload = await cloudinary.uploader.upload(file.tempFilePath, {
+                const upload = await cloudinary.uploader.upload(image, {
                     folder: "products",
                     width: 300,
                     height: 350,
