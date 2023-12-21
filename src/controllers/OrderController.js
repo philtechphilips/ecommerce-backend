@@ -35,7 +35,37 @@ const fetchOrders = async function (req, res) {
     }
 }
 
+const takeOrders = async function (req, res) {
+    let { orderId } = req.params, { orderStatus } = req.body, order;
+
+    try {
+        order = await fetchOne(Order, { orderId })
+        if (!order) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Order not found.",
+            });
+        }
+        order = await update(
+            Order,
+            { orderId }, { orderStatus }
+        );
+        return successResponse(res, {
+            statusCode: 200,
+            message: "Order updated sucessfully!.",
+            payload: order,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
 
 export {
-    fetchOrders
+    fetchOrders,
+    takeOrders
 }
