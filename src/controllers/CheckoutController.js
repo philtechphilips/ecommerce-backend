@@ -1,12 +1,13 @@
 import dotenv from "dotenv";
 import { errorResponse, successResponse } from "../helpers/response";
 import { create, deleteItem, fetch, fetchOne, hardDeleteItem, isUnique, update } from "../helpers/schema";
-import redis from "../config/redis";
 import Cart from "../models/cart";
 import axios from "axios";
 import Order from "../models/order";
 import Payment from "../models/payment";
 import Notification from "../models/notification";
+import { getYear } from "date-fns";
+import { sendMail } from "../utils/email";
 
 
 dotenv.config();
@@ -38,7 +39,7 @@ const verifyPayment = async function (req, res) {
                 paidDate: verification.paid_at
             };
             await create(Payment, payment);
-
+            await sendEMail(reference, verification.status, user)
             let cart, orders, notification;
             cart = await fetch(Cart, { userId: user._id, isPurchased: false });
             for (const cartItem of cart) {
@@ -137,6 +138,40 @@ const fetchPaymentByTxRef = async function (req, res) {
         });
     }
 };
+
+const sendEMail = async function(paymentReference, paymentStatus, user){
+        const subject = `Payment on VirtuC`;
+        const html = `<!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+          </style>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td style="padding: 20px 0; text-align: center; background-color: #333333;">
+                <h2 style="color: #ffffff;">Payment on ${process.env.EMAIL_SENDER_NAME}</h2>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 20px; background-color: #ffffff;">
+              <p>Payment on VirtuC with payment reference ${paymentReference} is ${paymentStatus}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 20px; text-align: center; background-color: #333333;">
+                <p style="color: #ffffff; margin: 0;">© ${getYear(new Date())} ${process.env.EMAIL_SENDER_NAME}. All rights reserved.</p>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        `
+        const recepient = user.email;
+        sendMail(subject, html, recepient);
+}
 
 export {
     verifyPayment,

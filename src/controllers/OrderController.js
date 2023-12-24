@@ -36,7 +36,7 @@ const fetchOrders = async function (req, res) {
 }
 
 const takeOrders = async function (req, res) {
-    let { orderId } = req.params, { orderStatus } = req.body, order;
+    let { orderId } = req.params, { orderStatus } = req.body, order; 
 
     try {
         order = await fetchOne(Order, { orderId })
