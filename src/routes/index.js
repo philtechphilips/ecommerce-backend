@@ -11,6 +11,7 @@ import notificationRouter from "../routes/notification";
 import newsletterRouter from "../routes/newsletter";
 import headerBarRouter from "../routes/header-bar";
 import orderRouter from "../routes/orders";
+import dasboardRouter from "../routes/dashboard";
 
 const Router = express.Router();
 
@@ -33,6 +34,7 @@ Router.use("/notification", notificationRouter);
 Router.use("/newsletter", newsletterRouter); 
 Router.use("/header-bar", headerBarRouter); 
 Router.use("/orders", orderRouter); 
+Router.use("/dashboard", dasboardRouter); 
 
 Router.use(function (req, res, next) {
     res.status(404).send({ responseCode: 404, message: 'Invalid resource URL', data: [] });
