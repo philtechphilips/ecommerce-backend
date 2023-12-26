@@ -92,14 +92,13 @@ const createCategoryType = async function (req, res) {
         }
 
         categoryTypes = categories.categoryTypes.concat({ type: categoryType })
-        // console.log(categoryTypes)
         categories = await update(
             Category, { _id: categoryId }, { categoryTypes }
         );
         responseData = {
             payload: categories,
-            statusCode: 201,
-            message: "Category created sucessfully!",
+            statusCode: 200,
+            message: "Category type created sucessfully!",
         };
         return successResponse(res, responseData);
     } catch (error) {
@@ -166,6 +165,38 @@ const deleteCategoryType = async function (req, res) {
             payload: categories,
             statusCode: 200,
             message: "Category type deleted sucessfully!",
+        };
+        return successResponse(res, responseData);
+    } catch (error) {
+        console.log(error);
+        return errorResponse(res, {
+            statusCode: 500,
+            message: "An error occured, pls try again later.",
+        });
+    }
+}
+
+const updateCategory = async function (req, res) {
+    let {
+        category
+    } = req.body, { id } = req.params;
+    let categories, responseData;
+    try {
+        categories = await fetchOne(Category, { _id: id });
+        if (!categories) {
+            return errorResponse(res, {
+                statusCode: 400,
+                message: "Category not found",
+            });
+        }
+        categories = {
+            category
+        };
+        categories = await update(Category, { _id: id}, categories);
+        responseData = {
+            payload: categories,
+            statusCode: 200,
+            message: "Category updated sucessfully!",
         };
         return successResponse(res, responseData);
     } catch (error) {
@@ -294,5 +325,6 @@ export {
     createCategoryType,
     deleteCategory,
     deleteCategoryType,
-    fetchCategory
+    fetchCategory,
+    updateCategory
 }
