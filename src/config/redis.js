@@ -5,8 +5,8 @@ dotenv.config();
 const Redis = require('ioredis');
 
 const redis = new Redis({
-  host: 'red-cm5jdpmd3nmc73anmhfg',
-  port: 6379,
+  host: process.env.REDIS_NAME,
+  port: process.env.REDIS_PORT,
 });
 
 module.exports = redis;
