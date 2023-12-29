@@ -12,15 +12,15 @@ const fetchNotification = async function (req, res) {
     const { user } = req;
     let notification;
     try {
-        // notification = await redis.get("notification");
-        // // console.log(notification)
-        // if (notification) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "notification fetched sucessfully!.",
-        //         payload: JSON.parse(notification),
-        //     });
-        // }
+        notification = await redis.get("notification");
+        // console.log(notification)
+        if (notification) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "notification fetched sucessfully!.",
+                payload: JSON.parse(notification),
+            });
+        }
         notification = await fetch(Notification, {userId: user._id});
         redis.set("notification", JSON.stringify(notification), "EX", 3600);
         return successResponse(res, {

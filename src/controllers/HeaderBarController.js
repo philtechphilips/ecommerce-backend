@@ -10,15 +10,15 @@ dotenv.config();
 const fetchHeaderBar = async function (req, res) {
     let HeaderBar;
     try {
-        // HeaderBar = await redis.get("HeaderBar");
-        // // console.log(HeaderBar)
-        // if (HeaderBar) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "HeaderBar fetched sucessfully!.",
-        //         payload: JSON.parse(HeaderBar),
-        //     });
-        // }
+        HeaderBar = await redis.get("HeaderBar");
+        // console.log(HeaderBar)
+        if (HeaderBar) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "HeaderBar fetched sucessfully!.",
+                payload: JSON.parse(HeaderBar),
+            });
+        }
         HeaderBar = await fetch(headerBar);
         redis.set("HeaderBar", JSON.stringify(HeaderBar), "EX", 3600);
         return successResponse(res, {
