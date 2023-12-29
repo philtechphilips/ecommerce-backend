@@ -6,6 +6,7 @@ const productValidator = async (req, res, next) => {
         await productSchema.validateAsync(req.body);
         return next();
     } catch (error) {
+        console.log(error)
         return errorResponse(res, { statusCode: 422, message: error.message });
     }
 }

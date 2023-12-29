@@ -11,7 +11,7 @@ const productSchema = Joi.object({
     highlight: Joi.array(),
     size: Joi.array(),
     color: Joi.array(),
-    quantity: Joi.string().min(3).required(),
+    quantity: Joi.string(),
     image: Joi.array(),
 });
 

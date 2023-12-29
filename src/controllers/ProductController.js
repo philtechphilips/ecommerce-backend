@@ -7,7 +7,7 @@ const cloudinary = require("../config/cloudinary")
 
 
 const createProducts = async function (req, res) {
-    let { title, categoryId, categoryType, details, price, discount, highlights, instructions, sizes, colors, image } = req.body;
+    let { title, categoryId, categoryType, details, price, discount, highlight: highlights, instructions, size: sizes, color: colors, image } = req.body;
     let imageUrl, product;
     try {
         if (!image) {
@@ -16,11 +16,11 @@ const createProducts = async function (req, res) {
                 message: "Add a product image.",
             });
         }
-        const uniqueTitle = await isUnique(Product, { title });
+        const uniqueTitle = await isUnique(Product, { title, categoryId, categoryType });
         if (!uniqueTitle) {
             return errorResponse(res, {
                 statusCode: 422,
-                message: "product with title exists.",
+                message: "Product with title exists in this category.",
             });
         }
         let images = []
@@ -55,7 +55,7 @@ const createProducts = async function (req, res) {
             payload: product,
         });
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         return errorResponse(res, {
             statusCode: 500,
             message: "An error occured, pls try again later.",
@@ -95,14 +95,14 @@ const fetchSingleProductBySlug = async function (req, res) {
     const { slug } = req.params
     let products;
     try {
-        // products = await redis.get(`singleproducts-${slug}`);
-        // if (products) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "Products fetched sucessfully!.",
-        //         payload: JSON.parse(products),
-        //     });
-        // }
+        products = await redis.get(`singleproducts-${slug}`);
+        if (products) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Products fetched sucessfully!.",
+                payload: JSON.parse(products),
+            });
+        }
         products = await fetchOne(Product, { slug });
         if (products) {
             redis.set(`singleproducts-${slug}`, JSON.stringify(products), "EX", 3600);
@@ -129,17 +129,16 @@ const fetchSingleProductBySlug = async function (req, res) {
 const fetchProducts = async function (req, res) {
     let products;
     try {
-        // products = await redis.get("products");
-        // // console.log(products)
-        // if (products) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "Products fetched sucessfully!.",
-        //         payload: JSON.parse(products),
-        //     });
-        // }
+        products = await redis.get("rand-products");
+        if (products) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Products fetched sucessfully!.",
+                payload: JSON.parse(products),
+            });
+        }
         products = await fetchInRandomOrder(20, Product);
-        redis.set("products", JSON.stringify(products), "EX", 3600);
+        redis.set("rand-products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Products fetched sucessfully!.",
@@ -158,17 +157,16 @@ const fetchTrendingProducts = async function (req, res) {
     const { category } = req.params
     let products;
     try {
-        // products = await redis.get("products");
-        // // console.log(products)
-        // if (products) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "Products fetched sucessfully!.",
-        //         payload: JSON.parse(products),
-        //     });
-        // }
+        products = await redis.get("trending-products");
+        if (products) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Products fetched sucessfully!.",
+                payload: JSON.parse(products),
+            });
+        }
         products = await fetch(Product, { isTrending: true, categoryId: category });
-        redis.set("products", JSON.stringify(products), "EX", 3600);
+        redis.set("trending-products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Products fetched sucessfully!.",
@@ -188,17 +186,16 @@ const fetchShopProducts = async function (req, res) {
     const { category, categoryType } = req.params
     let products;
     try {
-        // products = await redis.get("products");
-        // // console.log(products)
-        // if (products) {
-        //     return successResponse(res, {
-        //         statusCode: 200,
-        //         message: "Products fetched sucessfully!.",
-        //         payload: JSON.parse(products),
-        //     });
-        // }
+        products = await redis.get("shop-products");
+        if (products) {
+            return successResponse(res, {
+                statusCode: 200,
+                message: "Products fetched sucessfully!.",
+                payload: JSON.parse(products),
+            });
+        }
         products = await fetch(Product, { categoryId: category, categoryType });
-        redis.set("products", JSON.stringify(products), "EX", 3600);
+        redis.set("shop-products", JSON.stringify(products), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Products fetched sucessfully!.",
