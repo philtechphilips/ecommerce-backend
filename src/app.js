@@ -15,9 +15,16 @@ import axios from "axios";
 const app = new express();
 
 initialize();
+const corsOptions = {
+  origin: 'https://virtuc.netlify.app', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: false, 
+  optionsSuccessStatus: 200,
+};
+
 
 // Setup middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
 app.use(morgan("tiny"));
