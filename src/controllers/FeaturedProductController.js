@@ -36,6 +36,7 @@ const createFeaturedProduct = async function (req, res) {
                 buttonText, buttonUrl, imageUrl, categoryId
             }
         );
+        redis.del("f-Product");
         return successResponse(res, {
             statusCode: 201,
             message: "Featured Product Created sucessfully!.",
@@ -53,8 +54,7 @@ const createFeaturedProduct = async function (req, res) {
 const fetchFeaturedProducts = async function (req, res) {
     let featuredProduct;
     try {
-        featuredProduct = await redis.get("activeFeaturedProduct");
-        // console.log(featuredProduct)
+        featuredProduct = await redis.get("f-Product");
         if (featuredProduct) {
             return successResponse(res, {
                 statusCode: 200,
@@ -63,14 +63,14 @@ const fetchFeaturedProducts = async function (req, res) {
             });
         }
         featuredProduct = await fetch(FeaturedProduct);
-        redis.set("featuredProduct", JSON.stringify(activeFeaturedProduct), "EX", 3600);
+        redis.set("f-Product", JSON.stringify(featuredProduct), "EX", 3600);
         return successResponse(res, {
             statusCode: 200,
             message: "Featured Product fetched sucessfully!.",
             payload: featuredProduct,
         });
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         return errorResponse(res, {
             statusCode: 500,
             message: "An error occured, pls try again later.",
